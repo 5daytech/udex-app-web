@@ -1,4 +1,4 @@
-import { BigNumber } from '@0x/utils';
+import { BigNumber } from '0x.js';
 
 import { DEFAULT_ESTIMATED_TRANSACTION_TIME_MS, DEFAULT_GAS_PRICE, GWEI_IN_WEI } from '../common/constants';
 import { getLogger } from '../util/logger';
@@ -35,7 +35,7 @@ export const getGasEstimationInfoAsync = async (): Promise<GasInfo> => {
         gasPriceInWei: DEFAULT_GAS_PRICE,
         estimatedTimeMs: DEFAULT_ESTIMATED_TRANSACTION_TIME_MS,
     };
-    logger.info(info);
+    logger.debug(info);
     return info;
 };
 

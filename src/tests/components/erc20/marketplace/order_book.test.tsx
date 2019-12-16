@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { BigNumber } from '@0x/utils';
+import { BigNumber } from '0x.js';
 import React from 'react';
 import { Provider } from 'react-redux';
 import renderer from 'react-test-renderer';

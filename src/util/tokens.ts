@@ -1,4 +1,4 @@
-import { BigNumber } from '@0x/utils';
+import { BigNumber } from '0x.js';
 
 import { isWeth } from './known_tokens';
 

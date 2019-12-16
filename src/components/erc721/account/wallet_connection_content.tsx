@@ -1,4 +1,4 @@
-import { BigNumber } from '@0x/utils';
+import { BigNumber } from '0x.js';
 import React, { HTMLAttributes } from 'react';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { connect } from 'react-redux';

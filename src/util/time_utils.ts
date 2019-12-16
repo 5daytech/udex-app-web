@@ -1,6 +1,4 @@
-import { BigNumber } from '@0x/utils';
-
-import { DEFAULT_ORDER_EXPIRY_SECONDS } from '../common/constants';
+import { BigNumber } from '0x.js';
 
 export const tomorrow = () => {
     return new BigNumber(Math.floor(new Date().valueOf() / 1000) + 3600 * 24);
@@ -19,10 +17,6 @@ export const convertTimeInSecondsToDaysAndHours = (timeInSeconds: BigNumber) => 
         days,
         hours,
     };
-};
-
-export const getExpirationTimeOrdersFromConfig = () => {
-    return new BigNumber(todayInSeconds()).plus(DEFAULT_ORDER_EXPIRY_SECONDS);
 };
 
 export const getEndDateStringFromTimeInSeconds = (timeInSeconds: BigNumber) => {

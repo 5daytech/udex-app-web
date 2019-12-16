@@ -1,35 +1,24 @@
-import { BigNumber } from '@0x/utils';
+import { BigNumber } from '0x.js';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 
-import { ZERO } from '../../../common/constants';
 import { toggleTokenLock, updateWethBalance } from '../../../store/blockchain/actions';
 import { addressFactory, tokenFactory } from '../../../util/test-utils';
 
 const web3Wrapper = {
     awaitTransactionSuccessAsync: jest.fn().mockResolvedValue(''),
-    getBalanceInWeiAsync: jest.fn().mockResolvedValue(ZERO),
+    getBalanceInWeiAsync: jest.fn().mockResolvedValue(new BigNumber(0)),
     getNetworkIdAsync: jest.fn().mockResolvedValue(50),
 };
 
 const contractWrappers = {
     erc20Token: {
-        approve: {
-            sendTransactionAsync: jest.fn(),
-        },
+        setProxyAllowanceAsync: jest.fn(),
+        setUnlimitedProxyAllowanceAsync: jest.fn(),
     },
-    erc20Proxy: {
-        address: '0x0000000000000000000000000000000000000001',
+    etherToken: {
+        depositAsync: jest.fn(),
     },
-    weth9: {
-        approve: {
-            sendTransactionAsync: jest.fn(),
-        },
-        deposit: {
-            sendTransactionAsync: jest.fn(),
-        },
-    },
-    getProvider: () => ({ isStandardizedProvider: true }),
 };
 
 const mockStore = configureMockStore([
@@ -41,11 +30,10 @@ const mockStore = configureMockStore([
 
 describe('blockchain actions', () => {
     describe('toggleTokenLock', () => {
-        it.skip('should set the allowance to 0 when the token is unlocked', async () => {
-            // HACK(dekz) skipped as erc20Token no longer exists on contractWrappers
+        it('should set the allowance to 0 when the token is unlocked', async () => {
             // given
             const tx = 'some-tx';
-            contractWrappers.erc20Token.approve.sendTransactionAsync.mockResolvedValueOnce(tx);
+            contractWrappers.erc20Token.setProxyAllowanceAsync.mockResolvedValueOnce(tx);
             const token = tokenFactory.build();
             const ethAccount = addressFactory.build().address;
             const store = mockStore({
@@ -61,9 +49,10 @@ describe('blockchain actions', () => {
             const result = await store.dispatch(toggleTokenLock(token, true) as any);
 
             // then
-            expect(contractWrappers.erc20Token.approve.sendTransactionAsync).toHaveBeenCalled();
-            expect(contractWrappers.erc20Token.approve.sendTransactionAsync.mock.calls[0][0]).toEqual(token.address);
-            expect(contractWrappers.erc20Token.approve.sendTransactionAsync.mock.calls[0][1]).toEqual(ZERO);
+            expect(contractWrappers.erc20Token.setProxyAllowanceAsync).toHaveBeenCalled();
+            expect(contractWrappers.erc20Token.setProxyAllowanceAsync.mock.calls[0][0]).toEqual(token.address);
+            expect(contractWrappers.erc20Token.setProxyAllowanceAsync.mock.calls[0][1]).toEqual(ethAccount);
+            expect(contractWrappers.erc20Token.setProxyAllowanceAsync.mock.calls[0][2]).toEqual(new BigNumber(0));
             expect(result).toEqual(tx);
         });
     });
@@ -71,7 +60,7 @@ describe('blockchain actions', () => {
         it('should convert eth to weth', async () => {
             // given
             const tx = 'some-tx';
-            contractWrappers.weth9.deposit.sendTransactionAsync.mockResolvedValueOnce(tx);
+            contractWrappers.etherToken.depositAsync.mockResolvedValueOnce(tx);
             const store = mockStore({
                 blockchain: {
                     ethBalance: new BigNumber(10),
@@ -90,9 +79,7 @@ describe('blockchain actions', () => {
             const result = await store.dispatch(updateWethBalance(new BigNumber(5)) as any);
 
             // then
-            expect(contractWrappers.weth9.deposit.sendTransactionAsync.mock.calls[0][0].value).toEqual(
-                new BigNumber(4),
-            );
+            expect(contractWrappers.etherToken.depositAsync.mock.calls[0][1]).toEqual(new BigNumber(4));
             expect(result).toEqual(tx);
         });
     });

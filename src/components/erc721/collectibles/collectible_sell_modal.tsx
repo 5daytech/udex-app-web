@@ -1,10 +1,9 @@
-import { BigNumber } from '@0x/utils';
+import { BigNumber } from '0x.js';
 import React from 'react';
 import Modal from 'react-modal';
 import { connect } from 'react-redux';
 import styled, { css, withTheme } from 'styled-components';
 
-import { ZERO } from '../../../common/constants';
 import { selectCollectible } from '../../../store/collectibles/actions';
 import { getSelectedCollectible } from '../../../store/selectors';
 import { startSellCollectibleSteps } from '../../../store/ui/actions';
@@ -325,7 +324,7 @@ class CollectibleSellModalContainer extends React.Component<Props> {
                         <FieldContainer>
                             <BigInputNumberStyled
                                 decimals={18}
-                                min={ZERO}
+                                min={new BigNumber(0)}
                                 onChange={this._updateStartingPrice}
                                 placeholder={'0.00'}
                                 value={startPrice}
@@ -353,7 +352,7 @@ class CollectibleSellModalContainer extends React.Component<Props> {
                             <FieldContainer>
                                 <BigInputNumberStyled
                                     decimals={18}
-                                    min={ZERO}
+                                    min={new BigNumber(0)}
                                     onChange={this._updateEndingPrice}
                                     value={endingPrice}
                                     placeholder={'0.00'}

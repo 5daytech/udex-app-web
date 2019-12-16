@@ -1,9 +1,9 @@
-import { BigNumber } from '@0x/utils';
+import { BigNumber } from '0x.js';
 import React from 'react';
 import Modal from 'react-modal';
 import styled from 'styled-components';
 
-import { ETH_DECIMALS, UI_DECIMALS_DISPLAYED_ON_STEP_MODALS, ZERO } from '../../common/constants';
+import { ETH_DECIMALS, UI_DECIMALS_DISPLAYED_ON_STEP_MODALS } from '../../common/constants';
 import { tokenAmountInUnits, unitsInTokenAmount } from '../../util/tokens';
 import { ButtonVariant } from '../../util/types';
 import { BigNumberInput } from '../common/big_number_input';
@@ -281,7 +281,7 @@ class WethModal extends React.Component<Props, State> {
                                     boxType={ETHBoxType.Eth}
                                     decimals={18}
                                     max={totalEth}
-                                    min={ZERO}
+                                    min={new BigNumber(0)}
                                     onChange={this._updateEth}
                                     value={selectedEth}
                                     placeholder={PLACEHOLDER}
@@ -306,7 +306,7 @@ class WethModal extends React.Component<Props, State> {
                                     autofocus={true}
                                     decimals={ETH_DECIMALS}
                                     max={totalEth}
-                                    min={ZERO}
+                                    min={new BigNumber(0)}
                                     onChange={this._updateWeth}
                                     value={selectedWeth}
                                     boxType={ETHBoxType.Weth}

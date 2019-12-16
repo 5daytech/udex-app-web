@@ -1,8 +1,7 @@
-import { BigNumber } from '@0x/utils';
+import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { ZERO } from '../../../common/constants';
 import { getWeb3Wrapper } from '../../../services/web3_wrapper';
 import { getOrderbookAndUserOrders, submitMarketOrder } from '../../../store/actions';
 import { getEstimatedTxTimeMs, getQuoteToken, getStepsModalCurrentStep } from '../../../store/selectors';
@@ -102,7 +101,7 @@ class BuySellTokenStep extends React.Component<Props, State> {
         const quoteTokenSymbol = tokenSymbolToDisplayString(quoteToken.symbol);
         const { amountInReturn } = this.state;
         return `${tokenAmountInUnits(
-            amountInReturn || ZERO,
+            amountInReturn || new BigNumber(0),
             quoteToken.decimals,
             quoteToken.displayDecimals,
         ).toString()} ${quoteTokenSymbol}`;

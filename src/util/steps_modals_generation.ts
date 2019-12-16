@@ -1,11 +1,8 @@
-import { assetDataUtils } from '@0x/order-utils';
-import { SignedOrder } from '@0x/types';
-import { BigNumber } from '@0x/utils';
+import { BigNumber, SignedOrder } from '0x.js';
 
 import { isWeth, isZrx } from './known_tokens';
 import {
     Collectible,
-    OrderFeeData,
     OrderSide,
     Step,
     StepBuyCollectible,
@@ -25,31 +22,29 @@ export const createBuySellLimitSteps = (
     amount: BigNumber,
     price: BigNumber,
     side: OrderSide,
-    orderFeeData: OrderFeeData,
+    makerFee: BigNumber,
 ): Step[] => {
     const buySellLimitFlow: Step[] = [];
-    let unlockTokenStep;
+    let unlockBaseOrQuoteTokenStep;
 
     // unlock base and quote tokens if necessary
 
-    unlockTokenStep =
+    unlockBaseOrQuoteTokenStep =
         side === OrderSide.Buy
             ? // If it's a buy -> the quote token has to be unlocked
               getUnlockTokenStepIfNeeded(quoteToken, tokenBalances, wethTokenBalance)
             : // If it's a sell -> the base token has to be unlocked
               getUnlockTokenStepIfNeeded(baseToken, tokenBalances, wethTokenBalance);
 
-    if (unlockTokenStep) {
-        buySellLimitFlow.push(unlockTokenStep);
+    if (unlockBaseOrQuoteTokenStep) {
+        buySellLimitFlow.push(unlockBaseOrQuoteTokenStep);
     }
 
-    if (orderFeeData.makerFee.isGreaterThan(0)) {
-        const { tokenAddress } = assetDataUtils.decodeERC20AssetData(orderFeeData.makerFeeAssetData);
-        if (!unlockTokenStep || unlockTokenStep.token.address !== tokenAddress) {
-            const unlockFeeTokenStep = getUnlockFeeAssetStepIfNeeded(tokenBalances, tokenAddress);
-            if (unlockFeeTokenStep) {
-                buySellLimitFlow.push(unlockFeeTokenStep);
-            }
+    // unlock zrx (for fees) if it's not one of the traded tokens and if the maker fee is positive
+    if (!isZrx(baseToken.symbol) && !isZrx(quoteToken.symbol) && makerFee.isGreaterThan(0)) {
+        const unlockZrxStep = getUnlockZrxStepIfNeeded(tokenBalances);
+        if (unlockZrxStep) {
+            buySellLimitFlow.push(unlockZrxStep);
         }
     }
 
@@ -151,7 +146,7 @@ export const createBuySellMarketSteps = (
     amount: BigNumber,
     side: OrderSide,
     price: BigNumber,
-    orderFeeData: OrderFeeData,
+    takerFee: BigNumber,
 ): Step[] => {
     const buySellMarketFlow: Step[] = [];
     const isBuy = side === OrderSide.Buy;
@@ -173,14 +168,11 @@ export const createBuySellMarketSteps = (
         buySellMarketFlow.push(unlockTokenStep as Step);
     }
 
-    // unlock fees if the taker fee is positive
-    if (orderFeeData.takerFee.isGreaterThan(0)) {
-        const { tokenAddress } = assetDataUtils.decodeERC20AssetData(orderFeeData.takerFeeAssetData);
-        if (!unlockTokenStep || (unlockTokenStep && unlockTokenStep.token.address !== tokenAddress)) {
-            const unlockFeeStep = getUnlockFeeAssetStepIfNeeded(tokenBalances, tokenAddress);
-            if (unlockFeeStep) {
-                buySellMarketFlow.push(unlockFeeStep);
-            }
+    // unlock zrx (for fees) if the taker fee is positive
+    if (!isZrx(tokenToUnlock.symbol) && takerFee.isGreaterThan(0)) {
+        const unlockZrxStep = getUnlockZrxStepIfNeeded(tokenBalances);
+        if (unlockZrxStep) {
+            buySellMarketFlow.push(unlockZrxStep);
         }
     }
 
@@ -274,25 +266,6 @@ export const getWrapEthStepIfNeeded = (
     } else {
         return null;
     }
-};
-
-export const getUnlockFeeAssetStepIfNeeded = (
-    tokenBalances: TokenBalance[],
-    feeTokenAddress: string,
-): StepToggleTokenLock | null => {
-    const balance = tokenBalances.find(tokenBalance => tokenBalance.token.address === feeTokenAddress);
-    if (!balance) {
-        throw new Error(`Unknown fee token: ${feeTokenAddress}`);
-    }
-    if (!balance.isUnlocked) {
-        return {
-            kind: StepKind.ToggleTokenLock,
-            token: balance.token,
-            isUnlocked: false,
-            context: 'order',
-        };
-    }
-    return null;
 };
 
 export const getUnlockZrxStepIfNeeded = (tokenBalances: TokenBalance[]): StepToggleTokenLock | null => {

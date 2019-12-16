@@ -1,13 +1,7 @@
-import {
-    DecodedLogEvent,
-    ExchangeContract,
-    ExchangeEvents,
-    ExchangeFillEventArgs,
-    LogWithDecodedArgs,
-} from '@0x/contract-wrappers';
+import { DecodedLogEvent, ExchangeEvents, ExchangeFillEventArgs, ExchangeWrapper, LogWithDecodedArgs } from '0x.js';
 
 interface SubscribeToFillEventsParams {
-    exchange: ExchangeContract;
+    exchange: ExchangeWrapper;
     fromBlock: number;
     toBlock: number;
     ethAccount: string;

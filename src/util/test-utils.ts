@@ -1,10 +1,7 @@
+import { assetDataUtils, BigNumber, OrderStatus } from '0x.js';
 import { SignedOrder } from '@0x/connect';
-import { assetDataUtils } from '@0x/order-utils';
-import { OrderStatus } from '@0x/types';
-import { BigNumber, NULL_BYTES } from '@0x/utils';
 import * as Factory from 'factory.ts';
 
-import { CHAIN_ID, ZERO } from '../common/constants';
 import { TokenMetaData } from '../common/tokens_meta_data';
 
 import { Collectible, OrderSide, Token, TokenBalance, UIOrder } from './types';
@@ -34,11 +31,8 @@ export const makeOrder = ({
         takerAssetAmount: new BigNumber(takerAssetAmount),
         makerAssetData: assetDataUtils.encodeERC20AssetData(makerTokenAddress),
         takerAssetData: assetDataUtils.encodeERC20AssetData(takerTokenAddress),
-        makerFee: ZERO,
-        takerFee: ZERO,
-        makerFeeAssetData: NULL_BYTES,
-        takerFeeAssetData: NULL_BYTES,
-        chainId: CHAIN_ID,
+        makerFee: new BigNumber('0'),
+        takerFee: new BigNumber('0'),
         signature: '',
     };
 };
@@ -46,12 +40,14 @@ export const makeOrder = ({
 export const uiOrder = (params = {}): UIOrder => {
     const rawOrder: any = {};
     return {
-        filled: ZERO,
+        filled: new BigNumber(0),
         price: new BigNumber(1),
         rawOrder,
         side: OrderSide.Sell,
         size: new BigNumber(1),
         status: OrderStatus.Fillable,
+        remainingTakerAssetFillAmount: rawOrder.takerAssetAmount,
+        makerFillableAmountInTakerAsset: rawOrder.takerAssetAmount,
         ...params,
     };
 };

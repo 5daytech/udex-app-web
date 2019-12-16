@@ -1,5 +1,4 @@
-import { ExchangeFillEventArgs, LogWithDecodedArgs } from '@0x/contract-wrappers';
-import { assetDataUtils } from '@0x/order-utils';
+import { assetDataUtils, ExchangeFillEventArgs, LogWithDecodedArgs } from '0x.js';
 
 import { KNOWN_TOKENS_META_DATA, TokenMetaData } from '../common/tokens_meta_data';
 import { getLogger } from '../util/logger';

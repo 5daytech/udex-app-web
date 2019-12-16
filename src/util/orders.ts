@@ -1,13 +1,12 @@
+import { assetDataUtils, BigNumber, DutchAuctionWrapper, Order, SignedOrder } from '0x.js';
 import { OrderConfigRequest } from '@0x/connect';
-import { assetDataUtils, Order, SignedOrder } from '@0x/order-utils';
-import { BigNumber } from '@0x/utils';
 
-import { CHAIN_ID, PROTOCOL_FEE_MULTIPLIER, ZERO, ZERO_ADDRESS } from '../common/constants';
+import { ZERO_ADDRESS } from '../common/constants';
 import { getRelayer } from '../services/relayer';
 
 import { getKnownTokens } from './known_tokens';
 import * as orderHelper from './orders';
-import { getExpirationTimeOrdersFromConfig } from './time_utils';
+import { tomorrow } from './time_utils';
 import { tokenAmountInUnitsToBigNumber, unitsInTokenAmount } from './tokens';
 import { OrderSide, UIOrder } from './types';
 
@@ -55,7 +54,7 @@ export const buildDutchAuctionCollectibleOrder = async (params: DutchAuctionOrde
     } = params;
     const collectibleData = assetDataUtils.encodeERC721AssetData(collectibleAddress, collectibleId);
     const beginTimeSeconds = new BigNumber(Math.round(Date.now() / 1000));
-    const auctionAssetData = assetDataUtils.encodeDutchAuctionAssetData(collectibleData, beginTimeSeconds, price);
+    const auctionAssetData = DutchAuctionWrapper.encodeDutchAuctionAssetData(collectibleData, beginTimeSeconds, price);
     const wethAssetData = assetDataUtils.encodeERC20AssetData(wethAddress);
 
     const orderConfigRequest: OrderConfigRequest = {
@@ -86,13 +85,12 @@ export const buildSellCollectibleOrder = async (params: BuildSellCollectibleOrde
     const collectibleData = assetDataUtils.encodeERC721AssetData(collectibleAddress, collectibleId);
     const wethAssetData = assetDataUtils.encodeERC20AssetData(wethAddress);
 
-    const round = (num: BigNumber): BigNumber => num.integerValue(BigNumber.ROUND_FLOOR);
     const orderConfigRequest: OrderConfigRequest = {
         exchangeAddress,
         makerAssetData: collectibleData,
         takerAssetData: wethAssetData,
-        makerAssetAmount: side === OrderSide.Buy ? round(amount.multipliedBy(price)) : amount,
-        takerAssetAmount: side === OrderSide.Buy ? amount : round(amount.multipliedBy(price)),
+        makerAssetAmount: side === OrderSide.Buy ? amount.multipliedBy(price) : amount,
+        takerAssetAmount: side === OrderSide.Buy ? amount : amount.multipliedBy(price),
         makerAddress: account,
         takerAddress: ZERO_ADDRESS,
         expirationTimeSeconds: expirationDate,
@@ -113,10 +111,7 @@ export const buildLimitOrder = async (params: BuildLimitOrderParams, side: Order
     const quoteTokenAmountInUnits = baseTokenAmountInUnits.multipliedBy(price);
 
     const quoteTokenDecimals = getKnownTokens().getTokenByAddress(quoteTokenAddress).decimals;
-    const round = (num: BigNumber): BigNumber => num.integerValue(BigNumber.ROUND_FLOOR);
-    const quoteTokenAmountInBaseUnits = round(
-        unitsInTokenAmount(quoteTokenAmountInUnits.toString(), quoteTokenDecimals),
-    );
+    const quoteTokenAmountInBaseUnits = unitsInTokenAmount(quoteTokenAmountInUnits.toString(), quoteTokenDecimals);
 
     const isBuy = side === OrderSide.Buy;
 
@@ -128,7 +123,7 @@ export const buildLimitOrder = async (params: BuildLimitOrderParams, side: Order
         takerAssetAmount: isBuy ? amount : quoteTokenAmountInBaseUnits,
         makerAddress: account,
         takerAddress: ZERO_ADDRESS,
-        expirationTimeSeconds: getExpirationTimeOrdersFromConfig(),
+        expirationTimeSeconds: tomorrow(),
     };
 
     return orderHelper.getOrderWithTakerAndFeeConfigFromRelayer(orderConfigRequest);
@@ -137,10 +132,10 @@ export const buildLimitOrder = async (params: BuildLimitOrderParams, side: Order
 export const getOrderWithTakerAndFeeConfigFromRelayer = async (orderConfigRequest: OrderConfigRequest) => {
     const client = getRelayer();
     const orderResult = await client.getOrderConfigAsync(orderConfigRequest);
+
     return {
         ...orderConfigRequest,
         ...orderResult,
-        chainId: CHAIN_ID,
         salt: new BigNumber(Date.now()),
     };
 };
@@ -148,7 +143,7 @@ export const getOrderWithTakerAndFeeConfigFromRelayer = async (orderConfigReques
 export const buildMarketOrders = (
     params: BuildMarketOrderParams,
     side: OrderSide,
-): [SignedOrder[], BigNumber[], boolean] => {
+): { orders: SignedOrder[]; amounts: BigNumber[]; canBeFilled: boolean } => {
     const { amount, orders } = params;
 
     // sort orders from best to worse
@@ -162,7 +157,7 @@ export const buildMarketOrders = (
 
     const ordersToFill: SignedOrder[] = [];
     const amounts: BigNumber[] = [];
-    let filledAmount = ZERO;
+    let filledAmount = new BigNumber(0);
     for (let i = 0; i < sortedOrders.length && filledAmount.isLessThan(amount); i++) {
         const order = sortedOrders[i];
         ordersToFill.push(order.rawOrder);
@@ -190,8 +185,7 @@ export const buildMarketOrders = (
     const canBeFilled = filledAmount.eq(amount);
 
     const roundedAmounts = amounts.map(a => a.integerValue(BigNumber.ROUND_CEIL));
-
-    return [ordersToFill, roundedAmounts, canBeFilled];
+    return { orders: ordersToFill, amounts: roundedAmounts, canBeFilled };
 };
 
 export const sumTakerAssetFillableOrders = (
@@ -203,22 +197,17 @@ export const sumTakerAssetFillableOrders = (
         throw new Error('ordersToFill and amount array lengths must be the same.');
     }
     if (ordersToFill.length === 0) {
-        return ZERO;
+        return new BigNumber(0);
     }
     return ordersToFill.reduce((sum, order, index) => {
         // Check buildMarketOrders for more details
         const price = side === OrderSide.Buy ? 1 : order.makerAssetAmount.div(order.takerAssetAmount);
         return sum.plus(amounts[index].multipliedBy(price));
-    }, ZERO);
-};
-
-export const calculateWorstCaseProtocolFee = (orders: SignedOrder[], gasPrice: BigNumber): BigNumber => {
-    const protocolFee = new BigNumber(orders.length * PROTOCOL_FEE_MULTIPLIER).times(gasPrice);
-    return protocolFee;
+    }, new BigNumber(0));
 };
 
 export const getDutchAuctionData = (assetData: string) => {
-    return assetDataUtils.decodeDutchAuctionData(assetData);
+    return DutchAuctionWrapper.decodeDutchAuctionData(assetData);
 };
 
 export const isDutchAuction = (order: SignedOrder) => {

@@ -1,12 +1,10 @@
-import { SignedOrder } from '@0x/types';
-import { BigNumber } from '@0x/utils';
-import { Web3Wrapper } from '@0x/web3-wrapper';
+import { MetamaskSubprovider, signatureUtils, SignedOrder } from '0x.js';
 import { createAction, createAsyncAction } from 'typesafe-actions';
 
-import { FEE_PERCENTAGE, FEE_RECIPIENT } from '../../common/constants';
+import { ZERO_ADDRESS } from '../../common/constants';
 import { cancelSignedOrder } from '../../services/orders';
 import { getLogger } from '../../util/logger';
-import { calculateWorstCaseProtocolFee, isDutchAuction } from '../../util/orders';
+import { isDutchAuction } from '../../util/orders';
 import { getTransactionOptions } from '../../util/transactions';
 import { Collectible, ThunkCreator } from '../../util/types';
 import { getEthAccount, getGasPriceInWei } from '../selectors';
@@ -52,49 +50,35 @@ export const submitBuyCollectible: ThunkCreator<Promise<string>> = (order: Signe
 
         const state = getState();
         const gasPrice = getGasPriceInWei(state);
-        const protocolFee = calculateWorstCaseProtocolFee([order], gasPrice);
+        const gasOptions = getTransactionOptions(gasPrice);
 
         let tx;
         if (isDutchAuction(order)) {
-            throw new Error('DutchAuction currently unsupported');
-            // const auctionDetails = await contractWrappers.dutchAuction.getAuctionDetails.callAsync(order);
-            // const currentAuctionAmount = auctionDetails.currentAmount;
-            // const buyOrder = {
-            //     ...order,
-            //     makerAddress: ethAccount,
-            //     makerAssetData: order.takerAssetData,
-            //     takerAssetData: order.makerAssetData,
-            //     makerAssetAmount: currentAuctionAmount,
-            //     takerAssetAmount: order.makerAssetAmount,
-            // };
+            const auctionDetails = await contractWrappers.dutchAuction.getAuctionDetailsAsync(order);
+            const currentAuctionAmount = auctionDetails.currentAmount;
+            const buyOrder = {
+                ...order,
+                makerAddress: ethAccount,
+                makerAssetData: order.takerAssetData,
+                takerAssetData: order.makerAssetData,
+                makerAssetAmount: currentAuctionAmount,
+                takerAssetAmount: order.makerAssetAmount,
+            };
 
-            // const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
-            // const buySignedOrder = await signatureUtils.ecSignOrderAsync(provider, buyOrder, ethAccount);
-            // tx = await contractWrappers.dutchAuction.matchOrders.sendTransactionAsync(
-            //     buySignedOrder,
-            //     order,
-            //     buySignedOrder.signature,
-            //     order.signature,
-            //     { from: ethAccount, value: protocolFee, ...getTransactionOptions(gasPrice) },
-            // );
+            const provider = new MetamaskSubprovider(web3Wrapper.getProvider());
+            const buySignedOrder = await signatureUtils.ecSignOrderAsync(provider, buyOrder, ethAccount);
+            tx = await contractWrappers.dutchAuction.matchOrdersAsync(buySignedOrder, order, ethAccount, gasOptions);
         } else {
-            const affiliateFeeAmount = order.takerAssetAmount
-                .plus(protocolFee)
-                .multipliedBy(FEE_PERCENTAGE)
-                .integerValue(BigNumber.ROUND_CEIL);
-            tx = await contractWrappers.forwarder
-                .marketBuyOrdersWithEth(
-                    [order],
-                    order.makerAssetAmount,
-                    [order.signature],
-                    Web3Wrapper.toBaseUnitAmount(FEE_PERCENTAGE, 18),
-                    FEE_RECIPIENT,
-                )
-                .sendTransactionAsync({
-                    from: ethAccount,
-                    value: order.takerAssetAmount.plus(affiliateFeeAmount).plus(protocolFee),
-                    ...getTransactionOptions(gasPrice),
-                });
+            tx = await contractWrappers.forwarder.marketBuyOrdersWithEthAsync(
+                [order],
+                order.makerAssetAmount,
+                ethAccount,
+                order.takerAssetAmount,
+                [],
+                0,
+                ZERO_ADDRESS,
+                gasOptions,
+            );
         }
         await web3Wrapper.awaitTransactionSuccessAsync(tx);
 

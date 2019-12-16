@@ -1,7 +1,5 @@
-import { assetDataUtils } from '@0x/order-utils';
-import { BigNumber, NULL_BYTES } from '@0x/utils';
+import { BigNumber } from '0x.js';
 
-import { ZERO } from '../../common/constants';
 import {
     createBuySellLimitSteps,
     createBuySellMarketSteps,
@@ -11,23 +9,9 @@ import {
 } from '../../util/steps_modals_generation';
 import { tokenFactory } from '../../util/test-utils';
 import { unitsInTokenAmount } from '../../util/tokens';
-import {
-    OrderFeeData,
-    OrderSide,
-    Step,
-    StepKind,
-    StepToggleTokenLock,
-    StepWrapEth,
-    TokenBalance,
-} from '../../util/types';
+import { OrderSide, Step, StepKind, StepToggleTokenLock, StepWrapEth, TokenBalance } from '../../util/types';
 
-const DEFAULT_FEE_DATA = {
-    makerFeeAssetData: NULL_BYTES,
-    takerFeeAssetData: NULL_BYTES,
-    makerFee: ZERO,
-    takerFee: ZERO,
-};
-
+const ZERO = new BigNumber(0);
 const tokenDefaults = {
     primaryColor: 'white',
     decimals: 18,
@@ -36,17 +20,8 @@ const tokenDefaults = {
 const wethToken = {
     ...tokenDefaults,
     address: '0x100',
-    symbol: 'weth',
+    symbol: 'WETH',
     name: 'wETH',
-};
-
-const TOKENS = {
-    ZRX: tokenFactory.build({ decimals: 18, symbol: 'zrx' }),
-    MKR: tokenFactory.build({ decimals: 18, symbol: 'mkr' }),
-    REP: tokenFactory.build({ decimals: 18, symbol: 'rep' }),
-    DGD: tokenFactory.build({ decimals: 18, symbol: 'dgd' }),
-    MLN: tokenFactory.build({ decimals: 18, symbol: 'mln' }),
-    WETH: tokenFactory.build({ decimals: 18, symbol: 'weth' }),
 };
 
 const tokenBalances: TokenBalance[] = [
@@ -54,7 +29,9 @@ const tokenBalances: TokenBalance[] = [
         balance: new BigNumber(1),
         token: {
             ...tokenDefaults,
-            ...TOKENS.ZRX,
+            address: '0x1',
+            symbol: 'zrx',
+            name: 'Zrx',
         },
         isUnlocked: true,
     },
@@ -62,7 +39,9 @@ const tokenBalances: TokenBalance[] = [
         balance: new BigNumber(1),
         token: {
             ...tokenDefaults,
-            ...TOKENS.MKR,
+            address: '0x2',
+            symbol: 'mkr',
+            name: 'Mkr',
         },
         isUnlocked: true,
     },
@@ -70,7 +49,9 @@ const tokenBalances: TokenBalance[] = [
         balance: new BigNumber(1),
         token: {
             ...tokenDefaults,
-            ...TOKENS.REP,
+            address: '0x3',
+            symbol: 'rep',
+            name: 'Augur',
         },
         isUnlocked: true,
     },
@@ -78,7 +59,9 @@ const tokenBalances: TokenBalance[] = [
         balance: new BigNumber(1),
         token: {
             ...tokenDefaults,
-            ...TOKENS.DGD,
+            address: '0x3',
+            symbol: 'dgd',
+            name: 'Digi',
         },
         isUnlocked: true,
     },
@@ -86,7 +69,9 @@ const tokenBalances: TokenBalance[] = [
         balance: new BigNumber(1),
         token: {
             ...tokenDefaults,
-            ...TOKENS.MLN,
+            address: '0x3',
+            symbol: 'mln',
+            name: 'Melon',
         },
         isUnlocked: true,
     },
@@ -95,25 +80,19 @@ const tokenBalances: TokenBalance[] = [
 describe('Buy sell limit steps for zrx/weth', () => {
     it('should create just one buy limit step if base and quote tokens are unlocked', async () => {
         // given
-        const baseToken = TOKENS.ZRX;
-        const quoteToken = TOKENS.WETH;
+        const baseToken = tokenFactory.build({ decimals: 18, symbol: 'zrx' });
+        const quoteToken = tokenFactory.build({ decimals: 18, symbol: 'weth' });
         const wethTokenBalance = {
             balance: ZERO,
             token: wethToken,
             isUnlocked: true,
         };
-        const amount: BigNumber = ZERO;
-        const price: BigNumber = ZERO;
+        const amount: BigNumber = new BigNumber(0);
+        const price: BigNumber = new BigNumber(0);
         const side: OrderSide = OrderSide.Buy;
         const makerFee = unitsInTokenAmount('1', 18);
-        const makerFeeAssetData = assetDataUtils.encodeERC20AssetData(baseToken.address);
 
         // when
-        const feeData: OrderFeeData = {
-            ...DEFAULT_FEE_DATA,
-            makerFee,
-            makerFeeAssetData,
-        };
         const buySellLimitFlow: Step[] = createBuySellLimitSteps(
             baseToken,
             quoteToken,
@@ -122,7 +101,7 @@ describe('Buy sell limit steps for zrx/weth', () => {
             amount,
             price,
             side,
-            feeData,
+            makerFee,
         );
 
         // then
@@ -131,25 +110,17 @@ describe('Buy sell limit steps for zrx/weth', () => {
     });
     it('Should create two steps, buy and unlock step if creating a buy limit order for an X/Y market with Y locked', async () => {
         // given
-        const baseToken = TOKENS.ZRX;
-        const quoteToken = TOKENS.WETH;
+        const baseToken = tokenFactory.build({ decimals: 18, symbol: 'zrx' });
+        const quoteToken = tokenFactory.build({ decimals: 18, symbol: 'weth' });
         const wethTokenBalance = {
             balance: ZERO,
             token: wethToken,
             isUnlocked: false,
         };
-        const amount: BigNumber = ZERO;
-        const price: BigNumber = ZERO;
+        const amount: BigNumber = new BigNumber(0);
+        const price: BigNumber = new BigNumber(0);
         const side: OrderSide = OrderSide.Buy;
         const makerFee = unitsInTokenAmount('1', 18);
-        const makerFeeAssetData = assetDataUtils.encodeERC20AssetData(baseToken.address);
-
-        // when
-        const feeData: OrderFeeData = {
-            ...DEFAULT_FEE_DATA,
-            makerFee,
-            makerFeeAssetData,
-        };
 
         // when
         const buySellLimitFlow: Step[] = createBuySellLimitSteps(
@@ -160,7 +131,7 @@ describe('Buy sell limit steps for zrx/weth', () => {
             amount,
             price,
             side,
-            feeData,
+            makerFee,
         );
 
         // then
@@ -170,8 +141,8 @@ describe('Buy sell limit steps for zrx/weth', () => {
     });
     it('Should create two steps, buy and unlock step if creating a sell limit order for an X/Y market with X locked', async () => {
         // given
-        const baseToken = TOKENS.ZRX;
-        const quoteToken = TOKENS.WETH;
+        const baseToken = tokenFactory.build({ decimals: 18, symbol: 'zrx' });
+        const quoteToken = tokenFactory.build({ decimals: 18, symbol: 'weth' });
         // Base token zrx is locked
         tokenBalances[0].isUnlocked = false;
         const wethTokenBalance = {
@@ -179,18 +150,10 @@ describe('Buy sell limit steps for zrx/weth', () => {
             token: wethToken,
             isUnlocked: true,
         };
-        const amount: BigNumber = ZERO;
-        const price: BigNumber = ZERO;
+        const amount: BigNumber = new BigNumber(0);
+        const price: BigNumber = new BigNumber(0);
         const side: OrderSide = OrderSide.Sell;
         const makerFee = unitsInTokenAmount('1', 18);
-        const makerFeeAssetData = assetDataUtils.encodeERC20AssetData(baseToken.address);
-
-        // when
-        const feeData: OrderFeeData = {
-            ...DEFAULT_FEE_DATA,
-            makerFee,
-            makerFeeAssetData,
-        };
 
         // when
         const buySellLimitFlow: Step[] = createBuySellLimitSteps(
@@ -201,7 +164,7 @@ describe('Buy sell limit steps for zrx/weth', () => {
             amount,
             price,
             side,
-            feeData,
+            makerFee,
         );
         // then
         expect(buySellLimitFlow).toHaveLength(2);
@@ -210,8 +173,8 @@ describe('Buy sell limit steps for zrx/weth', () => {
     });
     it('Should create a unlock zrx step if MAKER FEE is positive and if zrx is locked', async () => {
         // given
-        const baseToken = TOKENS.MKR;
-        const quoteToken = TOKENS.WETH;
+        const baseToken = tokenFactory.build({ decimals: 18, symbol: 'mkr' });
+        const quoteToken = tokenFactory.build({ decimals: 18, symbol: 'weth' });
         const wethTokenBalance = {
             balance: ZERO,
             token: wethToken,
@@ -219,18 +182,10 @@ describe('Buy sell limit steps for zrx/weth', () => {
         };
         // Base token zrx is locked
         tokenBalances[0].isUnlocked = false;
-        const amount: BigNumber = ZERO;
-        const price: BigNumber = ZERO;
+        const amount: BigNumber = new BigNumber(0);
+        const price: BigNumber = new BigNumber(0);
         const side: OrderSide = OrderSide.Buy;
         const makerFee = unitsInTokenAmount('1', 18);
-        const makerFeeAssetData = assetDataUtils.encodeERC20AssetData(TOKENS.ZRX.address);
-
-        // when
-        const feeData: OrderFeeData = {
-            ...DEFAULT_FEE_DATA,
-            makerFee,
-            makerFeeAssetData,
-        };
 
         // when
         const buySellLimitFlow: Step[] = createBuySellLimitSteps(
@@ -241,7 +196,7 @@ describe('Buy sell limit steps for zrx/weth', () => {
             amount,
             price,
             side,
-            feeData,
+            makerFee,
         );
 
         // then
@@ -254,8 +209,8 @@ describe('Buy sell limit steps for zrx/weth', () => {
 describe('Buy sell market steps for zrx/weth', () => {
     it('should create just one buy market step if base and quote tokens are unlocked', async () => {
         // given
-        const baseToken = TOKENS.ZRX;
-        const quoteToken = TOKENS.WETH;
+        const baseToken = tokenFactory.build({ decimals: 18, symbol: 'zrx' });
+        const quoteToken = tokenFactory.build({ decimals: 18, symbol: 'weth' });
         // Unlocks base zrx token
         tokenBalances[0].isUnlocked = true;
         const wethTokenBalance = {
@@ -263,13 +218,11 @@ describe('Buy sell market steps for zrx/weth', () => {
             token: wethToken,
             isUnlocked: true,
         };
-        const ethBalance = ZERO;
-        const amount: BigNumber = ZERO;
+        const ethBalance = new BigNumber(0);
+        const amount: BigNumber = new BigNumber(0);
         const side: OrderSide = OrderSide.Buy;
-        const amountOfWethNeededForOrders = ZERO;
-
-        // when
-        const feeData = DEFAULT_FEE_DATA;
+        const amountOfWethNeededForOrders = new BigNumber(0);
+        const takerFee = unitsInTokenAmount('1', 18);
 
         // when
         const buySellMarketFlow: Step[] = createBuySellMarketSteps(
@@ -281,7 +234,7 @@ describe('Buy sell market steps for zrx/weth', () => {
             amount,
             side,
             amountOfWethNeededForOrders,
-            feeData,
+            takerFee,
         );
 
         // then
@@ -290,28 +243,20 @@ describe('Buy sell market steps for zrx/weth', () => {
     });
     it('Should create a unlock zrx step if TAKER FEE is positive and if zrx is locked', async () => {
         // given
-        const baseToken = TOKENS.MKR;
-        const quoteToken = TOKENS.WETH;
+        const baseToken = tokenFactory.build({ decimals: 18, symbol: 'mkr' });
+        const quoteToken = tokenFactory.build({ decimals: 18, symbol: 'weth' });
         const wethTokenBalance = {
             balance: ZERO,
             token: wethToken,
             isUnlocked: true,
         };
-        const ethBalance = ZERO;
+        const ethBalance = new BigNumber(0);
         // Base token zrx is locked
         tokenBalances[0].isUnlocked = false;
-        const amount: BigNumber = ZERO;
+        const amount: BigNumber = new BigNumber(0);
         const side: OrderSide = OrderSide.Buy;
         const takerFee = unitsInTokenAmount('1', 18);
-        const amountOfWethNeededForOrders = ZERO;
-        const takerFeeAssetData = assetDataUtils.encodeERC20AssetData(TOKENS.ZRX.address);
-
-        // when
-        const feeData: OrderFeeData = {
-            ...DEFAULT_FEE_DATA,
-            takerFee,
-            takerFeeAssetData,
-        };
+        const amountOfWethNeededForOrders = new BigNumber(0);
 
         // when
         const buySellMarketFlow: Step[] = createBuySellMarketSteps(
@@ -323,7 +268,7 @@ describe('Buy sell market steps for zrx/weth', () => {
             amount,
             side,
             amountOfWethNeededForOrders,
-            feeData,
+            takerFee,
         );
 
         // then
@@ -336,7 +281,7 @@ describe('Buy sell market steps for zrx/weth', () => {
 describe('getUnlockTokenStepIfNeeded', () => {
     it('if the token is locked, should return a toggle lock step', async () => {
         // given
-        const lockedToken = TOKENS.MKR;
+        const lockedToken = tokenFactory.build({ decimals: 18, symbol: 'mkr' });
         // locks mkr token
         tokenBalances[1].isUnlocked = false;
         const wethTokenBalance = {
@@ -359,7 +304,7 @@ describe('getUnlockTokenStepIfNeeded', () => {
     });
     it('if the token is unlocked, should return null', async () => {
         // given
-        const lockedToken = TOKENS.MKR;
+        const lockedToken = tokenFactory.build({ decimals: 18, symbol: 'mkr' });
         // unlock mkr token
         tokenBalances[1].isUnlocked = true;
         const wethTokenBalance = {

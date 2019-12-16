@@ -1,9 +1,8 @@
-import { BigNumber } from '@0x/utils';
+import { BigNumber } from '0x.js';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 
-import { ZERO } from '../../../common/constants';
 import { initWallet, startBuySellLimitSteps, startBuySellMarketSteps } from '../../../store/actions';
 import { fetchTakerAndMakerFee } from '../../../store/relayer/actions';
 import { getCurrencyPair, getOrderPriceSelected, getWeb3State } from '../../../store/selectors';
@@ -14,7 +13,6 @@ import {
     ButtonIcons,
     ButtonVariant,
     CurrencyPair,
-    OrderFeeData,
     OrderSide,
     OrderType,
     StoreState,
@@ -35,15 +33,10 @@ interface StateProps {
 }
 
 interface DispatchProps {
-    onSubmitLimitOrder: (
-        amount: BigNumber,
-        price: BigNumber,
-        side: OrderSide,
-        orderFeeData: OrderFeeData,
-    ) => Promise<any>;
-    onSubmitMarketOrder: (amount: BigNumber, side: OrderSide, orderFeeData: OrderFeeData) => Promise<any>;
+    onSubmitLimitOrder: (amount: BigNumber, price: BigNumber, side: OrderSide, makerFee: BigNumber) => Promise<any>;
+    onSubmitMarketOrder: (amount: BigNumber, side: OrderSide, takerFee: BigNumber) => Promise<any>;
     onConnectWallet: () => any;
-    onFetchTakerAndMakerFee: (amount: BigNumber, price: BigNumber, side: OrderSide) => Promise<OrderFeeData>;
+    onFetchTakerAndMakerFee: (amount: BigNumber, price: BigNumber, side: OrderSide) => Promise<any>;
 }
 
 type Props = StateProps & DispatchProps;
@@ -253,7 +246,7 @@ class BuySell extends React.Component<Props, State> {
                         <FieldContainer>
                             <BigInputNumberStyled
                                 decimals={decimals}
-                                min={ZERO}
+                                min={new BigNumber(0)}
                                 onChange={this.updateMakerAmount}
                                 value={makerAmount}
                                 placeholder={'0.00'}
@@ -268,7 +261,7 @@ class BuySell extends React.Component<Props, State> {
                                 <FieldContainer>
                                     <BigInputNumberStyled
                                         decimals={0}
-                                        min={ZERO}
+                                        min={new BigNumber(0)}
                                         onChange={this.updatePrice}
                                         value={price}
                                         placeholder={'0.00'}
@@ -280,8 +273,8 @@ class BuySell extends React.Component<Props, State> {
                         <OrderDetailsContainer
                             orderType={orderType}
                             orderSide={tab}
-                            tokenAmount={makerAmount || ZERO}
-                            tokenPrice={price || ZERO}
+                            tokenAmount={makerAmount || new BigNumber(0)}
+                            tokenPrice={price || new BigNumber(0)}
                             currencyPair={currencyPair}
                         />
                         <Button
@@ -321,15 +314,15 @@ class BuySell extends React.Component<Props, State> {
 
     public submit = async () => {
         const orderSide = this.state.tab;
-        const makerAmount = this.state.makerAmount || ZERO;
-        const price = this.state.price || ZERO;
+        const makerAmount = this.state.makerAmount || new BigNumber(0);
+        const price = this.state.price || new BigNumber(0);
 
-        const orderFeeData = await this.props.onFetchTakerAndMakerFee(makerAmount, price, this.state.tab);
+        const { makerFee, takerFee } = await this.props.onFetchTakerAndMakerFee(makerAmount, price, this.state.tab);
         if (this.state.orderType === OrderType.Limit) {
-            await this.props.onSubmitLimitOrder(makerAmount, price, orderSide, orderFeeData);
+            await this.props.onSubmitLimitOrder(makerAmount, price, orderSide, makerFee);
         } else {
             try {
-                await this.props.onSubmitMarketOrder(makerAmount, orderSide, orderFeeData);
+                await this.props.onSubmitMarketOrder(makerAmount, orderSide, takerFee);
             } catch (error) {
                 this.setState(
                     {
@@ -393,10 +386,10 @@ const mapStateToProps = (state: StoreState): StateProps => {
 
 const mapDispatchToProps = (dispatch: any): DispatchProps => {
     return {
-        onSubmitLimitOrder: (amount: BigNumber, price: BigNumber, side: OrderSide, orderFeeData: OrderFeeData) =>
-            dispatch(startBuySellLimitSteps(amount, price, side, orderFeeData)),
-        onSubmitMarketOrder: (amount: BigNumber, side: OrderSide, orderFeeData: OrderFeeData) =>
-            dispatch(startBuySellMarketSteps(amount, side, orderFeeData)),
+        onSubmitLimitOrder: (amount: BigNumber, price: BigNumber, side: OrderSide, makerFee: BigNumber) =>
+            dispatch(startBuySellLimitSteps(amount, price, side, makerFee)),
+        onSubmitMarketOrder: (amount: BigNumber, side: OrderSide, takerFee: BigNumber) =>
+            dispatch(startBuySellMarketSteps(amount, side, takerFee)),
         onConnectWallet: () => dispatch(initWallet()),
         onFetchTakerAndMakerFee: (amount: BigNumber, price: BigNumber, side: OrderSide) =>
             dispatch(fetchTakerAndMakerFee(amount, price, side)),

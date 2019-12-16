@@ -1,5 +1,4 @@
-import { assetDataUtils, Order } from '@0x/order-utils';
-import { BigNumber } from '@0x/utils';
+import { assetDataUtils, BigNumber, Order } from '0x.js';
 
 import { getKnownTokens } from '../../util/known_tokens';
 import * as utilOrders from '../../util/orders';
@@ -152,11 +151,11 @@ describe('buildMarketOrders', () => {
         const orders = [uiOrder1, uiOrder2];
 
         // when
-        const [ordersToFill, amounts] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Buy);
+        const marketFill = utilOrders.buildMarketOrders({ amount, orders: [uiOrder1, uiOrder2] }, OrderSide.Buy);
 
         // then
-        expect(ordersToFill).toEqual([orders[0].rawOrder, orders[1].rawOrder]);
-        expect(amounts).toEqual([new BigNumber(3), new BigNumber(2)]);
+        expect(marketFill.orders).toEqual([orders[0].rawOrder, orders[1].rawOrder]);
+        expect(marketFill.amounts).toEqual([new BigNumber(3), new BigNumber(2)]);
     });
 
     it('should take price into account', () => {
@@ -187,11 +186,11 @@ describe('buildMarketOrders', () => {
 
         // when
         const amount = new BigNumber(5);
-        const [ordersToFill, amounts] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Buy);
+        const marketFill = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Buy);
 
         // then
-        expect(ordersToFill).toEqual([orders[0].rawOrder, orders[1].rawOrder]);
-        expect(amounts).toEqual([new BigNumber(3), new BigNumber(4)]);
+        expect(marketFill.orders).toEqual([orders[0].rawOrder, orders[1].rawOrder]);
+        expect(marketFill.amounts).toEqual([new BigNumber(3), new BigNumber(4)]);
     });
 
     it('should sort sell orders before filling them', () => {
@@ -222,11 +221,11 @@ describe('buildMarketOrders', () => {
 
         // when
         const amount = new BigNumber(5);
-        const [ordersToFill, amounts] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Buy);
+        const marketFill = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Buy);
 
         // then
-        expect(ordersToFill).toEqual([rawOrder2, rawOrder1]);
-        expect(amounts).toEqual([new BigNumber(3), new BigNumber(4)]);
+        expect(marketFill.orders).toEqual([rawOrder2, rawOrder1]);
+        expect(marketFill.amounts).toEqual([new BigNumber(3), new BigNumber(4)]);
     });
 
     it('should sort buy orders before filling them', () => {
@@ -257,11 +256,11 @@ describe('buildMarketOrders', () => {
 
         // when
         const amount = new BigNumber(5);
-        const [ordersToFill, amounts] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Sell);
+        const marketFill = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Sell);
 
         // then
-        expect(ordersToFill).toEqual([rawOrder2, rawOrder1]);
-        expect(amounts).toEqual([new BigNumber(4), new BigNumber(1)]);
+        expect(marketFill.orders).toEqual([rawOrder2, rawOrder1]);
+        expect(marketFill.amounts).toEqual([new BigNumber(4), new BigNumber(1)]);
     });
 
     it('work when only one order is enough', () => {
@@ -273,11 +272,11 @@ describe('buildMarketOrders', () => {
         ];
 
         // when
-        const [ordersToFill, amounts] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Sell);
+        const marketFill = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Sell);
 
         // then
-        expect(ordersToFill).toEqual([orders[1].rawOrder]);
-        expect(amounts).toEqual([new BigNumber(5)]);
+        expect(marketFill.orders).toEqual([orders[1].rawOrder]);
+        expect(marketFill.amounts).toEqual([new BigNumber(5)]);
     });
 
     it('should indicate when the amount can be filled', () => {
@@ -289,8 +288,7 @@ describe('buildMarketOrders', () => {
         ];
 
         // when
-        // tslint:disable-next-line:no-unused-variable
-        const [_ordersToFill, _amounts, canBeFilled] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Sell);
+        const { canBeFilled } = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Sell);
 
         // then
         expect(canBeFilled).toBe(true);
@@ -305,8 +303,7 @@ describe('buildMarketOrders', () => {
         ];
 
         // when
-        // tslint:disable-next-line:no-unused-variable
-        const [_ordersToFill, _amounts, canBeFilled] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Sell);
+        const { canBeFilled } = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Sell);
 
         // then
         expect(canBeFilled).toBe(false);
@@ -340,11 +337,11 @@ describe('buildMarketOrders', () => {
 
         // when
         const amount = new BigNumber(5);
-        const [ordersToFill, amounts] = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Buy);
+        const marketFill = utilOrders.buildMarketOrders({ amount, orders }, OrderSide.Buy);
 
         // then
-        expect(ordersToFill).toEqual([orders[0].rawOrder, orders[1].rawOrder]);
-        expect(amounts).toEqual([new BigNumber(4), new BigNumber(4)]);
+        expect(marketFill.orders).toEqual([orders[0].rawOrder, orders[1].rawOrder]);
+        expect(marketFill.amounts).toEqual([new BigNumber(4), new BigNumber(4)]);
     });
 });
 
