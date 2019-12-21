@@ -10,7 +10,7 @@ import { getRelayer } from '../../services/relayer';
 import { getKnownTokens } from '../../util/known_tokens';
 import { getLogger } from '../../util/logger';
 import { CurrencyPair, Market, StoreState, ThunkCreator, Token } from '../../util/types';
-import { getOrderbookAndUserOrders } from '../actions';
+import { getOrderbookAndUserOrders, setLoader } from '../actions';
 
 const logger = getLogger('Market::Actions');
 
@@ -41,6 +41,7 @@ export const fetchMarketPriceEtherUpdate = createAction('market/PRICE_ETHER_fetc
 
 export const changeMarket: ThunkCreator = (currencyPair: CurrencyPair) => {
     return async (dispatch, getState) => {
+        dispatch(setLoader());
         const knownTokens = getKnownTokens();
 
         dispatch(

@@ -46,6 +46,9 @@ export const setUserOrders = createAction('relayer/USER_ORDERS_set', resolve => 
     return (orders: UIOrder[]) => resolve(orders);
 });
 
+export const setLoader = createAction('relayer/ORDERS_set_loader');
+export const cancelLoader = createAction('relayer/ORDERS_cancel_loader');
+
 export const getAllOrders: ThunkCreator = () => {
     return async (dispatch, getState) => {
         const state = getState();
@@ -63,6 +66,7 @@ export const getAllOrders: ThunkCreator = () => {
                 uiOrders = await getAllOrdersAsUIOrders(baseToken, quoteToken, makerAddresses);
             }
             dispatch(setOrders(uiOrders));
+            dispatch(cancelLoader());
         } catch (err) {
             logger.error(`getAllOrders: fetch orders from the relayer failed.`, err);
         }

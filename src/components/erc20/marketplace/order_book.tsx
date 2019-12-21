@@ -44,6 +44,7 @@ interface StateProps {
     web3State?: Web3State;
     absoluteSpread: BigNumber;
     percentageSpread: BigNumber;
+    isLoading: Boolean;
 }
 
 interface OwnProps {
@@ -240,7 +241,7 @@ class OrderBookTable extends React.Component<Props> {
     }
 
     public render = () => {
-        const { orderBook, baseToken, quoteToken, web3State, theme, absoluteSpread, percentageSpread } = this.props;
+        const { orderBook, baseToken, quoteToken, web3State, theme, absoluteSpread, percentageSpread, isLoading } = this.props;
         const { sellOrders, buyOrders, mySizeOrders } = orderBook;
         const mySizeSellArray = mySizeOrders.filter((order: { side: OrderSide }) => {
             return order.side === OrderSide.Sell;
@@ -254,7 +255,7 @@ class OrderBookTable extends React.Component<Props> {
 
         let content: React.ReactNode;
 
-        if (web3State !== Web3State.Error && (!baseToken || !quoteToken)) {
+        if ((web3State !== Web3State.Error && (!baseToken || !quoteToken)) || isLoading) {
             content = <CenteredLoading />;
         } else if ((!buyOrders.length && !sellOrders.length) || !baseToken || !quoteToken) {
             content = <EmptyContent alignAbsoluteCenter={true} text="There are no orders to show" />;
@@ -415,6 +416,7 @@ const mapStateToProps = (state: StoreState): StateProps => {
         web3State: getWeb3State(state),
         absoluteSpread: getSpread(state),
         percentageSpread: getSpreadInPercentage(state),
+        isLoading: state.relayer.isLoading,
     };
 };
 
