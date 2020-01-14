@@ -331,6 +331,7 @@ const initWalletBeginCommon: ThunkCreator<Promise<any>> = () => {
                 initializeRelayerData({
                     orders: [],
                     userOrders: [],
+                    isLoading: true,
                 }),
             );
             // tslint:disable-next-line:no-floating-promises
@@ -508,6 +509,7 @@ export const initializeAppNoMetamaskOrLocked: ThunkCreator = () => {
             initializeRelayerData({
                 orders: [],
                 userOrders: [],
+                isLoading: true,
             }),
         );
 
