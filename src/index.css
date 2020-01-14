@@ -1,13 +1,17 @@
 @import url('https://rsms.me/inter/inter.css');
 @import url('https://rsms.me/inter/inter-ui.css');
 
+@font-face {
+    font-family: "SF Pro Display";
+    src: url('./assets/fonts/SF-Pro-Display-Regular.otf');
+}
 html {
-    font-family: 'Inter', sans-serif;
+    font-family: 'SF Pro Display', 'Inter', sans-serif;
 }
 
 @supports (font-variation-settings: normal) {
     html {
-        font-family: 'Inter var', sans-serif;
+        font-family: 'SF Pro Display', 'Inter var', sans-serif;
     }
 }
 

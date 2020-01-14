@@ -15,7 +15,7 @@ const LogoLink = styled.a<any>`
     cursor: pointer;
     display: flex;
     height: 33px;
-    font-family: 'Inter var', sans-serif;
+    font-family: 'SF Pro Display', 'Inter var', sans-serif;
     text-decoration: none;
 `;
 
