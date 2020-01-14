@@ -7,6 +7,7 @@ import { RootAction } from '../reducers';
 const initialRelayerState: RelayerState = {
     orders: [],
     userOrders: [],
+    isLoading: false,
 };
 
 export function relayer(state: RelayerState = initialRelayerState, action: RootAction): RelayerState {
@@ -17,6 +18,10 @@ export function relayer(state: RelayerState = initialRelayerState, action: RootA
             return { ...state, userOrders: action.payload };
         case getType(actions.initializeRelayerData):
             return action.payload;
+        case getType(actions.setLoader):
+            return { ...state, isLoading: true };
+        case getType(actions.cancelLoader):
+            return { ...state, isLoading: false};
         default:
             return state;
     }

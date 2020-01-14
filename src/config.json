@@ -36,32 +36,23 @@
         },
         {
             "decimals": 18,
-            "symbol": "wbtc",
-            "name": "Wrapped BTC",
-            "primaryColor": "#333333",
-            "addresses": {
-                "3": "0x96639968b1da3438dbb618465bcb2bf7b25ee6ad"
-            }
-        },
-        {
-            "decimals": 18,
             "displayDecimals": 2,
             "symbol": "dai",
             "name": "DAI",
             "icon": "assets/icons/dai.svg",
             "primaryColor": "#333333",
             "addresses": {
-                "1": "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359",
-                "3": "0xd914796ec26edd3f9651393f9751e0f3c00dd027"
+                "1": "0x89d24a6b4ccb1b6faa2625fe562bdd9a23260359"
             }
         },
         {
-            "decimals": 3,
-            "symbol": "usdt",
-            "name": "Tether USD",
+            "decimals": 6,
+            "symbol": "usdc",
+            "name": "USD Coin",
+            "icon": "assets/icons/usdc.svg",
             "primaryColor": "#333333",
             "addresses": {
-                "3": "0x6D00364318D008C3AEA08c097c25F5639AB5D2e6"
+                "1": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48"
             }
         },
         {
@@ -72,17 +63,62 @@
             "icon": "assets/icons/link.svg",
             "primaryColor": "#333333",
             "addresses": {
-                "1": "0x514910771af9ca656af840dff83e8264ecf986ca",
-                "3": "0x30845a385581ce1dc51d651ff74689d7f4415146"
+                "1": "0x514910771af9ca656af840dff83e8264ecf986ca"
             }
         },
         {
-            "decimals": 2,
-            "symbol": "ht",
-            "name": "Huobi",
+            "decimals": 18,
+            "displayDecimals": 2,
+            "symbol": "omg",
+            "name": "OmiseGO",
+            "icon": "assets/icons/omg.svg",
             "primaryColor": "#333333",
             "addresses": {
-                "3": "0x52E64BB7aEE0E5bdd3a1995E3b070e012277c0fd"
+                "1": "0xd26114cd6EE289AccF82350c8d8487fedB8A0C07"
+            }
+        },
+        {
+            "decimals": 18,
+            "displayDecimals": 2,
+            "symbol": "mkr",
+            "name": "Maker",
+            "icon": "assets/icons/mkr.svg",
+            "primaryColor": "#333333",
+            "addresses": {
+                "1": "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2"
+            }
+        },
+        {
+            "decimals": 18,
+            "displayDecimals": 2,
+            "symbol": "foam",
+            "name": "FOAM Token",
+            "icon": "assets/icons/foam.svg",
+            "primaryColor": "#333333",
+            "addresses": {
+                "1": "0x4946fcea7c692606e8908002e55a582af44ac121"
+            }
+        },
+        {
+            "decimals": 18,
+            "displayDecimals": 2,
+            "symbol": "lpt",
+            "name": "Livepeer Token",
+            "icon": "assets/icons/lpt.svg",
+            "primaryColor": "#333333",
+            "addresses": {
+                "1": "0x58b6a8a3302369daec383334672404ee733ab239"
+            }
+        },
+        {
+            "decimals": 18,
+            "displayDecimals": 2,
+            "symbol": "bat",
+            "name": "Basic Attention Token",
+            "icon": "assets/icons/bat.svg",
+            "primaryColor": "#333333",
+            "addresses": {
+                "1": "0x0D8775F648430679A709E98d2b0Cb6250d2887EF"
             }
         }
     ],
@@ -92,7 +128,27 @@
             "quote": "weth"
         },
         {
-            "base": "wbtc",
+            "base": "bat",
+            "quote": "weth"
+        },
+        {
+            "base": "lpt",
+            "quote": "weth"
+        },
+        {
+            "base": "link",
+            "quote": "weth"
+        },
+        {
+            "base": "foam",
+            "quote": "weth"
+        },
+        {
+            "base": "mkr",
+            "quote": "weth"
+        },
+        {
+            "base": "omg",
             "quote": "weth"
         },
         {
@@ -100,40 +156,12 @@
             "quote": "weth"
         },
         {
-            "base": "usdt",
+            "base": "usdc",
             "quote": "weth"
         },
         {
-            "base": "ht",
-            "quote": "weth"
-        },
-        {
-            "base": "link",
-            "quote": "weth"
-        },
-        {
-            "base": "dai",
-            "quote": "wbtc"
-        },
-        {
-            "base": "usdt",
-            "quote": "wbtc"
-        },
-        {
-            "base": "ht",
-            "quote": "wbtc"
-        },
-        {
-            "base": "link",
-            "quote": "wbtc"
-        },
-        {
-            "base": "link",
-            "quote": "usdt"
-        },
-        {
-            "base": "zrx",
-            "quote": "wbtc"
+            "base": "usdc",
+            "quote": "dai"
         }
     ],
     "marketFilters": [
