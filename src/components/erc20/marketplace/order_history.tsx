@@ -23,6 +23,29 @@ interface StateProps {
 
 type Props = StateProps;
 
+const OrderHistoryCard = styled(Card)`
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    max-height: 100%;
+    max-width: 100%;
+
+    > div:first-child {
+        flex-grow: 0;
+        flex-shrink: 0;
+    }
+
+    > div:nth-child(2) {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow: hidden;
+        padding-bottom: 0;
+        padding-left: 0;
+        padding-right: 0;
+    }
+`;
+
 const SideTD = styled(CustomTD)<{ side: OrderSide }>`
     color: ${props =>
         props.side === OrderSide.Buy ? props.theme.componentsTheme.green : props.theme.componentsTheme.red};
@@ -97,7 +120,7 @@ class OrderHistory extends React.Component<Props> {
             }
         }
 
-        return <Card title="Orders">{content}</Card>;
+        return <OrderHistoryCard title="Orders">{content}</OrderHistoryCard>;
     };
 }
 
