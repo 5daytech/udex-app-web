@@ -84,7 +84,7 @@ const darkThemeColors: ThemeProperties = {
     modalSearchFieldTextColor: '#000',
     myWalletLinkColor: '#fff',
     notificationActive: '#F8F8F8',
-    notificationIconColor: '#fff',
+    notificationIconColor: '#F9D649',
     notificationsBadgeColor: '#ff6534',
     numberDecimalsColor: '#5A5A5A',
     red: '#FF6534',
