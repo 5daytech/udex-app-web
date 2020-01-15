@@ -28,7 +28,7 @@ const OrderHistoryCard = styled(Card)`
     flex-direction: column;
     flex-grow: 1;
     max-height: 100%;
-    max-width: 100%;
+    height: 100%
 
     > div:first-child {
         flex-grow: 0;
@@ -40,9 +40,6 @@ const OrderHistoryCard = styled(Card)`
         flex-direction: column;
         flex-grow: 1;
         overflow: hidden;
-        padding-bottom: 0;
-        padding-left: 0;
-        padding-right: 0;
     }
 `;
 
