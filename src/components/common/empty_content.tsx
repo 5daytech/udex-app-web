@@ -1,5 +1,8 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
+import { Column } from './column';
+import { EmptyOrdersIcon } from './icons/empty_orders_icon';
+import { DefaultText} from './text';
 
 interface EmptyWrapperProps {
     alignAbsoluteCenter?: boolean;
@@ -31,8 +34,19 @@ const EmptyContentWrapper = styled.div<EmptyWrapperProps>`
             : ''}
 `;
 
+const EmptyOrdersIconWrapper = styled.span`
+        margin-bottom: 2em;
+`;
+
+
 export const EmptyContent: React.FC<Props> = props => {
     const { text, ...restProps } = props;
-
-    return <EmptyContentWrapper {...restProps}>{text}</EmptyContentWrapper>;
+    return <EmptyContentWrapper {...restProps}>
+            <Column>
+                <EmptyOrdersIconWrapper>
+                    <EmptyOrdersIcon/>
+                </EmptyOrdersIconWrapper>
+                <DefaultText>{text}</DefaultText>
+            </Column>
+        </EmptyContentWrapper>
 };
