@@ -3,6 +3,9 @@ import styled from 'styled-components';
 
 import { GIT_COMMIT } from '../../common/constants';
 import { themeDimensions } from '../../themes/commons';
+import { Row } from './row';
+import AppStoreURL from '../../assets/icons/app-store.png';
+import PlayMarketURL from '../../assets/icons/play-market.png';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
@@ -10,8 +13,23 @@ const FooterWrapper = styled.div`
     align-items: center;
     display: flex;
     height: ${themeDimensions.footerHeight};
-    justify-content: center;
+    justify-content: space-between;
     padding: 0 ${themeDimensions.horizontalPadding} ${themeDimensions.verticalPadding};
+`;
+
+const StyledRow = styled(Row)`
+    justify-content: space-around;
+    max-width: 100%;
+    width: 18em;
+`;
+const AppStoreWrapper = styled.div``;
+
+const PlayMarketWrapper = styled.div`
+    margin-left: 10px;
+`;
+
+const poweredByWrapper = styled.div`
+    padding
 `;
 
 const poweredBySVG = () => {
@@ -87,6 +105,23 @@ export const Footer: React.FC<Props> = props => {
             <a href="https://0x.org/" target="_blank" rel="noopener noreferrer">
                 {poweredBySVG()}
             </a>
+            <Row>
+                <AppStoreWrapper>
+                    <a href="https://fridayte.ch" target="_blank">
+                        <img src={AppStoreURL}/>
+                    </a>
+                </AppStoreWrapper>
+                <PlayMarketWrapper>
+                    <a href="http://play.google.com/store/apps/details?id=com.fridaytech.dex" target="_blank">
+                        <img src={PlayMarketURL}/>
+                    </a>
+                </PlayMarketWrapper>
+                
+            </Row>
+            
+            {/* <a href="https://udex.app/" target="_blank">
+                {playMarketSVG()}
+            </a> */}
         </FooterWrapper>
     );
 };
