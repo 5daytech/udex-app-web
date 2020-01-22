@@ -29,7 +29,7 @@ export const GridRowSpreadContainer = styled(GridRow)<GridRowSpreadProps>`
     ${props => (props.stickySpreadState === 'top' ? 'top: 29px;' : '')}
     ${props => (props.stickySpreadState === 'bottom' ? 'bottom: 0;' : '')}
 
-    background-color: ${props => props.theme.componentsTheme.cardBackgroundColor};
+    background-color: ${props => props.theme.componentsTheme.spreadBackgroundColor};
     flex-grow: 0;
     flex-shrink: 0;
     position: ${props => (props.stickySpreadState === 'hidden' ? 'relative' : 'absolute')};
