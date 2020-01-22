@@ -109,6 +109,7 @@ export const tokenBalanceFactory = Factory.Sync.makeFactory<TokenBalance>({
     balance: new BigNumber(2),
     isUnlocked: true,
     token: tokenFactory.build(),
+    priceInUSD: null,
 });
 
 export const collectibleFactory = Factory.Sync.makeFactory<Collectible>({

@@ -12,7 +12,8 @@ import { NotificationsDropdownContainer } from '../../../components/notification
 import { goToHome, goToWallet } from '../../../store/actions';
 import { Theme, themeBreakPoints } from '../../../themes/commons';
 import { WalletConnectionContentContainer } from '../account/wallet_connection_content';
-
+import { WalletIcon } from '../../common/icons/wallet_icon';
+import { Row } from '../../../components/common/row';
 import { MarketsDropdownContainer } from './markets_dropdown';
 
 interface DispatchProps {
@@ -69,6 +70,10 @@ const WalletDropdown = styled(WalletConnectionContentContainer)`
     }
 `;
 
+const ToolBarTextWrapper = styled(Row)`
+    padding-left: 10px;
+`;
+
 const ToolbarContent = (props: Props) => {
     const handleLogoClick: React.EventHandler<React.MouseEvent> = e => {
         e.preventDefault();
@@ -95,7 +100,8 @@ const ToolbarContent = (props: Props) => {
     const endContent = (
         <>
             <MyWalletLink href="/my-wallet" onClick={handleMyWalletClick}>
-                My Wallet
+                <WalletIcon />
+                <ToolBarTextWrapper>My Wallet</ToolBarTextWrapper>
             </MyWalletLink>
             <WalletDropdown />
             <NotificationsDropdownContainer />

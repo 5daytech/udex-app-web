@@ -21,7 +21,7 @@ export function relayer(state: RelayerState = initialRelayerState, action: RootA
         case getType(actions.setLoader):
             return { ...state, isLoading: true };
         case getType(actions.cancelLoader):
-            return { ...state, isLoading: false};
+            return { ...state, isLoading: false };
         default:
             return state;
     }

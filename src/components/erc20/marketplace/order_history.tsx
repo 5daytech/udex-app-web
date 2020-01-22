@@ -13,6 +13,7 @@ import { LoadingWrapper } from '../../common/loading';
 import { CustomTD, Table, TH, THead, TR } from '../../common/table';
 
 import { CancelOrderButtonContainer } from './cancel_order_button';
+import { tokenSymbolToDisplayString } from '../../../util/tokens';
 
 interface StateProps {
     baseToken: Token | null;
@@ -28,7 +29,7 @@ const OrderHistoryCard = styled(Card)`
     flex-direction: column;
     flex-grow: 1;
     max-height: 100%;
-    max-width: 100%;
+    height: 100%
 
     > div:first-child {
         flex-grow: 0;
@@ -40,9 +41,6 @@ const OrderHistoryCard = styled(Card)`
         flex-direction: column;
         flex-grow: 1;
         overflow: hidden;
-        padding-bottom: 0;
-        padding-left: 0;
-        padding-right: 0;
     }
 `;
 
@@ -105,9 +103,15 @@ class OrderHistory extends React.Component<Props> {
                             <THead>
                                 <TR>
                                     <TH>Side</TH>
-                                    <TH styles={{ textAlign: 'right' }}>Size ({baseToken.symbol})</TH>
-                                    <TH styles={{ textAlign: 'right' }}>Filled ({baseToken.symbol})</TH>
-                                    <TH styles={{ textAlign: 'right' }}>Price ({quoteToken.symbol})</TH>
+                                    <TH styles={{ textAlign: 'right' }}>
+                                        Size ({tokenSymbolToDisplayString(baseToken.symbol)})
+                                    </TH>
+                                    <TH styles={{ textAlign: 'right' }}>
+                                        Filled ({tokenSymbolToDisplayString(baseToken.symbol)})
+                                    </TH>
+                                    <TH styles={{ textAlign: 'right' }}>
+                                        Price ({tokenSymbolToDisplayString(quoteToken.symbol)})
+                                    </TH>
                                     <TH>Status</TH>
                                     <TH>&nbsp;</TH>
                                 </TR>
@@ -120,7 +124,7 @@ class OrderHistory extends React.Component<Props> {
             }
         }
 
-        return <OrderHistoryCard title="Orders">{content}</OrderHistoryCard>;
+        return <OrderHistoryCard title="Open Orders">{content}</OrderHistoryCard>;
     };
 }
 

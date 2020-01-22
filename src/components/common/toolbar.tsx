@@ -25,9 +25,9 @@ export const separatorTopbar = css`
     &:after {
         background-color: ${props => props.theme.componentsTheme.topbarSeparatorColor};
         content: '';
-        height: 26px;
-        margin-left: 17px;
-        margin-right: 17px;
+        height: 63px;
+        margin-left: 30px;
+        margin-right: 30px;
         width: 1px;
     }
     &:last-child:after {

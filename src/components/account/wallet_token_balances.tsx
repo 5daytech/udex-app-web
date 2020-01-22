@@ -5,12 +5,13 @@ import styled from 'styled-components';
 
 import { startToggleTokenLockSteps } from '../../store/actions';
 import { getEthBalance, getTokenBalances, getWeb3State, getWethTokenBalance } from '../../store/selectors';
-import { tokenAmountInUnits } from '../../util/tokens';
+import { tokenAmountInUnits, tokenAmountInUSD } from '../../util/tokens';
 import { StoreState, Token, TokenBalance, Web3State } from '../../util/types';
 import { Card } from '../common/card';
 import { TokenIcon } from '../common/icons/token_icon';
 import { LoadingWrapper } from '../common/loading';
 import { CustomTD, Table, TH, THead, THLast, TR } from '../common/table';
+import { tokenSymbolToDisplayString } from '../../util/tokens';
 
 interface StateProps {
     ethBalance: BigNumber;
@@ -132,7 +133,7 @@ class WalletTokenBalances extends React.PureComponent<Props> {
         const totalEth = wethTokenBalance.balance.plus(ethBalance);
         const formattedTotalEthBalance = tokenAmountInUnits(totalEth, wethToken.decimals, wethToken.displayDecimals);
         const onTotalEthClick = () => onStartToggleTokenLockSteps(wethTokenBalance.token, wethTokenBalance.isUnlocked);
-
+        const balanceInUSD = tokenAmountInUSD(totalEth, wethToken.decimals, wethTokenBalance.priceInUSD);
         const totalEthRow = (
             <TR>
                 <TokenTD>
@@ -148,8 +149,7 @@ class WalletTokenBalances extends React.PureComponent<Props> {
                 <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>
                     {formattedTotalEthBalance}
                 </CustomTD>
-                <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>-</CustomTD>
-                <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>-</CustomTD>
+                <CustomTD styles={{ borderBottom: true, textAlign: 'right', tabular: true }}>{balanceInUSD}$</CustomTD>
                 <LockCell
                     isUnlocked={wethTokenBalance.isUnlocked}
                     onClick={onTotalEthClick}
@@ -159,9 +159,10 @@ class WalletTokenBalances extends React.PureComponent<Props> {
         );
 
         const tokensRows = tokenBalances.map((tokenBalance, index) => {
-            const { token, balance, isUnlocked } = tokenBalance;
+            const { token, balance, isUnlocked, priceInUSD } = tokenBalance;
             const { symbol } = token;
             const formattedBalance = tokenAmountInUnits(balance, token.decimals, token.displayDecimals);
+            const balanceInUSD = tokenAmountInUSD(balance, token.decimals, priceInUSD);
             const onClick = () => onStartToggleTokenLockSteps(token, isUnlocked);
 
             return (
@@ -170,11 +171,10 @@ class WalletTokenBalances extends React.PureComponent<Props> {
                         <TokenIconStyled symbol={token.symbol} primaryColor={token.primaryColor} icon={token.icon} />
                     </TokenTD>
                     <CustomTDTokenName styles={{ borderBottom: true }}>
-                        <TokenName>{token.symbol.toUpperCase()}</TokenName> {`- ${token.name}`}
+                        <TokenName>{tokenSymbolToDisplayString(token.symbol)}</TokenName> {`- ${token.name}`}
                     </CustomTDTokenName>
                     <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>{formattedBalance}</CustomTD>
-                    <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>-</CustomTD>
-                    <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>-</CustomTD>
+                    <CustomTD styles={{ borderBottom: true, textAlign: 'right' }}>{balanceInUSD}$</CustomTD>
                     <LockCell
                         isUnlocked={isUnlocked}
                         onClick={onClick}
@@ -196,7 +196,6 @@ class WalletTokenBalances extends React.PureComponent<Props> {
                             <THStyled>{}</THStyled>
                             <THStyled styles={{ textAlign: 'right' }}>Available Qty.</THStyled>
                             <THStyled styles={{ textAlign: 'right' }}>Price (USD)</THStyled>
-                            <THStyled styles={{ textAlign: 'right' }}>% Change</THStyled>
                             <THLast styles={{ textAlign: 'center' }}>Locked?</THLast>
                         </TR>
                     </THead>

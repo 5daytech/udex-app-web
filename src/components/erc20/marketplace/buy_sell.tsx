@@ -60,19 +60,23 @@ interface State {
 }
 
 const BuySellWrapper = styled(CardBase)`
-    margin-bottom: ${themeDimensions.verticalSeparationSm};
+    height: 100%;
+    max-height: 100%;
 `;
 
 const Content = styled.div`
     display: flex;
     flex-direction: column;
     padding: 20px ${themeDimensions.horizontalPadding};
+    justify-content: space-between;
+    height: 90%;
 `;
 
 const TabsContainer = styled.div`
     align-items: center;
     display: flex;
     justify-content: space-between;
+    height: 60px;
 `;
 
 const TabButton = styled.div<{ isSelected: boolean; side: OrderSide }>`
@@ -85,12 +89,7 @@ const TabButton = styled.div<{ isSelected: boolean; side: OrderSide }>`
     border-right-color: ${props => (props.isSelected ? props.theme.componentsTheme.cardBorderColor : 'transparent')};
     border-right-style: solid;
     border-right-width: 1px;
-    color: ${props =>
-        props.isSelected
-            ? props.side === OrderSide.Buy
-                ? props.theme.componentsTheme.green
-                : props.theme.componentsTheme.red
-            : props.theme.componentsTheme.textLight};
+    color: ${props => (props.isSelected ? props.theme.componentsTheme.white : props.theme.componentsTheme.textLight)};
     cursor: ${props => (props.isSelected ? 'default' : 'pointer')};
     display: flex;
     font-weight: 600;
@@ -128,6 +127,7 @@ const Label = styled.label<{ color?: string }>`
 
 const InnerTabs = styled(CardTabSelector)`
     font-size: 14px;
+    justify-content: center;
 `;
 
 const FieldContainer = styled.div`
@@ -166,6 +166,10 @@ const TokenText = styled.span`
     font-weight: normal;
     line-height: 21px;
     text-align: right;
+`;
+
+const ButtonWrapper = styled(Button)`
+    font-family: 'SF Pro Display Bold';
 `;
 
 const BigInputNumberTokenLabel = (props: { tokenSymbol: string }) => (
@@ -235,20 +239,20 @@ class BuySell extends React.Component<Props, State> {
                             onClick={this.changeTab(OrderSide.Buy)}
                             side={OrderSide.Buy}
                         >
-                            Buy
+                            BUY
                         </TabButton>
                         <TabButton
                             isSelected={tab === OrderSide.Sell}
                             onClick={this.changeTab(OrderSide.Sell)}
                             side={OrderSide.Sell}
                         >
-                            Sell
+                            SELL
                         </TabButton>
                     </TabsContainer>
                     <Content>
+                        <InnerTabs tabs={buySellInnerTabs} />
                         <LabelContainer>
                             <Label>Amount</Label>
-                            <InnerTabs tabs={buySellInnerTabs} />
                         </LabelContainer>
                         <FieldContainer>
                             <BigInputNumberStyled
@@ -284,7 +288,7 @@ class BuySell extends React.Component<Props, State> {
                             tokenPrice={price || ZERO}
                             currencyPair={currencyPair}
                         />
-                        <Button
+                        <ButtonWrapper
                             disabled={web3State !== Web3State.Done || orderTypeLimitIsEmpty || orderTypeMarketIsEmpty}
                             icon={error && error.btnMsg ? ButtonIcons.Warning : undefined}
                             onClick={this.submit}
@@ -296,8 +300,8 @@ class BuySell extends React.Component<Props, State> {
                                     : ButtonVariant.Sell
                             }
                         >
-                            {btnText}
-                        </Button>
+                            {btnText.toUpperCase()}
+                        </ButtonWrapper>
                     </Content>
                 </BuySellWrapper>
                 {error && error.cardMsg ? (
