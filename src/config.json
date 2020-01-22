@@ -6,7 +6,7 @@
     "tokens": [
         {
             "symbol": "zrx",
-            "name": "0x Protocol Token",
+            "name": "0x",
             "primaryColor": "#333333",
             "icon": "assets/icons/zrx.svg",
             "addresses": {
