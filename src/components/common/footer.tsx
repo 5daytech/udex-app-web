@@ -17,19 +17,10 @@ const FooterWrapper = styled.div`
     padding: 0 ${themeDimensions.horizontalPadding} ${themeDimensions.verticalPadding};
 `;
 
-const StyledRow = styled(Row)`
-    justify-content: space-around;
-    max-width: 100%;
-    width: 18em;
-`;
 const AppStoreWrapper = styled.div``;
 
 const PlayMarketWrapper = styled.div`
     margin-left: 10px;
-`;
-
-const poweredByWrapper = styled.div`
-    padding
 `;
 
 const poweredBySVG = () => {
@@ -107,13 +98,13 @@ export const Footer: React.FC<Props> = props => {
             </a>
             <Row>
                 <AppStoreWrapper>
-                    <a href="https://fridayte.ch" target="_blank">
-                        <img src={AppStoreURL}/>
+                    <a href="https://udex.app/share/ios" target="_blank" rel="noopener noreferrer">
+                        <img src={AppStoreURL} alt="AppStore"/>
                     </a>
                 </AppStoreWrapper>
                 <PlayMarketWrapper>
-                    <a href="http://play.google.com/store/apps/details?id=com.fridaytech.dex" target="_blank">
-                        <img src={PlayMarketURL}/>
+                    <a href="https://udex.app/share/android" target="_blank" rel="noopener noreferrer">
+                        <img src={PlayMarketURL} alt="PlayMarket"/>
                     </a>
                 </PlayMarketWrapper>
                 
