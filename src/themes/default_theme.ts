@@ -96,6 +96,7 @@ const lightThemeColors: ThemeProperties = {
     stepsProgressStepLineProgressColor: '#000',
     stepsProgressStepTitleColor: '#e6e6e6',
     stepsProgressStepTitleColorActive: '#000',
+    spreadBackgroundColor: '#fff',
     tableBorderColor: '#dedede',
     tdColor: '#000',
     textColorCommon: '#000',
@@ -111,6 +112,9 @@ const lightThemeColors: ThemeProperties = {
     topbarBackgroundColor: '#fff',
     topbarBorderColor: '#dedede',
     topbarSeparatorColor: '#dedede',
+    thinTextColor: '#000',
+    cardTabSelectorColor: '#000',
+    white: '#fff',
 };
 
 export class DefaultTheme implements Theme {

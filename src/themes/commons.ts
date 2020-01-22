@@ -73,6 +73,7 @@ export interface ThemeProperties {
     stepsProgressStepLineProgressColor: string;
     stepsProgressStepTitleColor: string;
     stepsProgressStepTitleColorActive: string;
+    spreadBackgroundColor: string;
     tableBorderColor: string;
     tdColor: string;
     textColorCommon: string;
@@ -83,11 +84,14 @@ export interface ThemeProperties {
     textLight: string;
     textLighter: string;
     thColor: string;
+    thinTextColor: string;
     tooltipBackgroundColor: string;
     tooltipTextColor: string;
     topbarBackgroundColor: string;
     topbarBorderColor: string;
     topbarSeparatorColor: string;
+    cardTabSelectorColor: string;
+    white: string;
 }
 
 export interface ThemeModalStyle {
@@ -122,11 +126,11 @@ export interface ThemeMetaData {
 }
 
 export const themeDimensions = {
-    borderRadius: '4px',
+    borderRadius: '5px',
     fieldHeight: '46px',
-    footerHeight: '38px',
-    horizontalPadding: '16px',
-    mainPadding: '10px',
+    footerHeight: '70px',
+    horizontalPadding: '20px',
+    mainPadding: '20px',
     sidebarWidth: '350px',
     toolbarHeight: '64px',
     verticalPadding: '10px',
