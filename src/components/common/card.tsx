@@ -24,6 +24,7 @@ const CardWrapper = styled(CardBase)`
 `;
 
 const CardHeader = styled.div`
+    height: 60px;
     align-items: center;
     border-bottom: 1px solid ${props => props.theme.componentsTheme.cardBorderColor};
     display: flex;
@@ -35,10 +36,10 @@ const CardHeader = styled.div`
 
 const CardTitle = styled.h1`
     color: ${props => props.theme.componentsTheme.cardTitleColor};
-    font-size: 16px;
+    font-size: 14px;
     font-style: normal;
     font-weight: 600;
-    line-height: 1.2;
+    line-height: 16px;
     margin: 0;
     padding: 0 20px 0 0;
 `;

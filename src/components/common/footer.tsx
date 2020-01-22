@@ -3,6 +3,9 @@ import styled from 'styled-components';
 
 import { GIT_COMMIT } from '../../common/constants';
 import { themeDimensions } from '../../themes/commons';
+import { Row } from './row';
+import AppStoreURL from '../../assets/icons/app-store.png';
+import PlayMarketURL from '../../assets/icons/play-market.png';
 
 interface Props extends HTMLAttributes<HTMLDivElement> {}
 
@@ -10,8 +13,14 @@ const FooterWrapper = styled.div`
     align-items: center;
     display: flex;
     height: ${themeDimensions.footerHeight};
-    justify-content: center;
+    justify-content: space-between;
     padding: 0 ${themeDimensions.horizontalPadding} ${themeDimensions.verticalPadding};
+`;
+
+const AppStoreWrapper = styled.div``;
+
+const PlayMarketWrapper = styled.div`
+    margin-left: 10px;
 `;
 
 const poweredBySVG = () => {
@@ -87,6 +96,22 @@ export const Footer: React.FC<Props> = props => {
             <a href="https://0x.org/" target="_blank" rel="noopener noreferrer">
                 {poweredBySVG()}
             </a>
+            <Row>
+                <AppStoreWrapper>
+                    <a href="https://udex.app/share/ios" target="_blank" rel="noopener noreferrer">
+                        <img src={AppStoreURL} alt="AppStore" />
+                    </a>
+                </AppStoreWrapper>
+                <PlayMarketWrapper>
+                    <a href="https://udex.app/share/android" target="_blank" rel="noopener noreferrer">
+                        <img src={PlayMarketURL} alt="PlayMarket" />
+                    </a>
+                </PlayMarketWrapper>
+            </Row>
+
+            {/* <a href="https://udex.app/" target="_blank">
+                {playMarketSVG()}
+            </a> */}
         </FooterWrapper>
     );
 };

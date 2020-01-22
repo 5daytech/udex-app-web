@@ -44,7 +44,6 @@ export const Table = styled.table<TableProps>`
 
 export const THead = styled.thead`
     font-size: 12px;
-    text-transform: uppercase;
 `;
 
 export const TBody = styled.tbody``;
@@ -61,12 +60,11 @@ export const TH = styled.th<TableTDProps>`
     color: ${props => (props.styles && props.styles.color ? props.styles.color : props.theme.componentsTheme.thColor)};
     font-size: 12px;
     font-weight: 500;
-    letter-spacing: 0.5px;
-    line-height: 1.2;
+    line-height: 16px;
     padding: 0 ${themeDimensions.horizontalPadding} 5px 0;
     text-align: ${props =>
         props.styles && props.styles.textAlign && props.styles.textAlign.length ? props.styles.textAlign : 'left'};
-    text-transform: uppercase;
+
     white-space: nowrap;
 
     &:last-child {
@@ -112,7 +110,8 @@ export const CustomTDLast = styled(CustomTD)`
 export const CustomTDTitle = styled(CustomTD)`
     color: ${props => (props.styles && props.styles.color ? props.styles.color : props.theme.componentsTheme.thColor)};
     font-size: 12px;
-    text-transform: uppercase;
+    text-transform: capitalize;
+    line-height: 16px;
 `;
 
 export const THFirst = styled(TH)`

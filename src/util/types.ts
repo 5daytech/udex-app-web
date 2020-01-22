@@ -36,6 +36,12 @@ export interface TokenBalance {
     balance: BigNumber;
     isUnlocked: boolean;
     token: Token;
+    priceInUSD: BigNumber | null;
+}
+
+export interface TokenPrice {
+    symbol: string;
+    price: BigNumber;
 }
 
 export interface OrderFeeData {

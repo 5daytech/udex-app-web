@@ -22,10 +22,17 @@ const CardTabSelectorWrapper = styled.div`
 `;
 
 const CardTabSelectorItem = styled.span<ItemProps>`
+    display: flex;
     color: ${props =>
         props.active ? props.theme.componentsTheme.textColorCommon : props.theme.componentsTheme.lightGray};
     cursor: ${props => (props.active ? 'default' : 'pointer')};
     user-select: none;
+    border-bottom-width: ${props => (props.active ? '1px' : '0px')};
+    border-bottom-style: solid;
+    border-bottom-color: ${props => (props.active ? props.theme.componentsTheme.cardTabSelectorColor : '#000')}
+    width: 20%;
+    height: 25px;
+    justify-content: center;
 `;
 
 const CardTabSelectorItemSeparator = styled.span<ItemProps>`
@@ -51,7 +58,7 @@ export const CardTabSelector: React.FC<Props> = props => {
                         <CardTabSelectorItem onClick={item.onClick} active={item.active}>
                             {item.text}
                         </CardTabSelectorItem>
-                        <CardTabSelectorItemSeparator>/</CardTabSelectorItemSeparator>
+                        <CardTabSelectorItemSeparator> </CardTabSelectorItemSeparator>
                     </React.Fragment>
                 );
             })}

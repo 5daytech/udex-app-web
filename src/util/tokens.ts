@@ -11,6 +11,20 @@ export const tokenAmountInUnits = (amount: BigNumber, decimals: number, toFixedD
     return tokenAmountInUnitsToBigNumber(amount, decimals).toFixed(toFixedDecimals);
 };
 
+export const tokenAmountInUSD = (
+    amount: BigNumber,
+    decimals: number,
+    rate: BigNumber | null,
+    toFixedDecimals = 2,
+): string => {
+    const tokenCount = tokenAmountInUnitsToBigNumber(amount, decimals);
+    if (rate) {
+        return tokenCount.multipliedBy(rate).toFixed(toFixedDecimals);
+    } else {
+        return new BigNumber(0).toFixed(toFixedDecimals);
+    }
+};
+
 export const unitsInTokenAmount = (units: string, decimals: number): BigNumber => {
     const decimalsPerToken = new BigNumber(10).pow(decimals);
 

@@ -45,15 +45,14 @@ const StyledButton = styled.button<{ variant?: ButtonVariant }>`
         props.variant && props.variant === ButtonVariant.Buy
             ? `background-color: ${props.theme.componentsTheme.buttonBuyBackgroundColor};`
             : ''}
-
     align-items: center;
     border-radius: ${themeDimensions.borderRadius};
     border: none;
     color: ${props => props.theme.componentsTheme.buttonTextColor};
     cursor: pointer;
     display: flex;
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: bold;
     justify-content: center;
     line-height: 1.2;
     padding: 15px;

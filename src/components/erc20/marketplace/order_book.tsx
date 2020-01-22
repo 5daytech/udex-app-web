@@ -2,6 +2,7 @@ import { BigNumber } from '@0x/utils';
 import React from 'react';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components';
+import { tokenSymbolToDisplayString } from '../../../util/tokens';
 
 import {
     UI_DECIMALS_DISPLAYED_ORDER_SIZE,
@@ -242,7 +243,16 @@ class OrderBookTable extends React.Component<Props> {
     }
 
     public render = () => {
-        const { orderBook, baseToken, quoteToken, web3State, theme, absoluteSpread, percentageSpread, isLoading } = this.props;
+        const {
+            orderBook,
+            baseToken,
+            quoteToken,
+            web3State,
+            theme,
+            absoluteSpread,
+            percentageSpread,
+            isLoading,
+        } = this.props;
         const { sellOrders, buyOrders, mySizeOrders } = orderBook;
         const mySizeSellArray = mySizeOrders.filter((order: { side: OrderSide }) => {
             return order.side === OrderSide.Sell;
@@ -263,7 +273,7 @@ class OrderBookTable extends React.Component<Props> {
         } else {
             const mySizeHeader =
                 web3State !== Web3State.Locked && web3State !== Web3State.NotInstalled ? (
-                    <THLast as="div" styles={{ textAlign: 'right', borderBottom: true }}>
+                    <THLast as="div" styles={{ textAlign: 'right', borderBottom: false }}>
                         My Size
                     </THLast>
                 ) : null;
@@ -274,11 +284,11 @@ class OrderBookTable extends React.Component<Props> {
             content = (
                 <>
                     <GridRowTop as="div">
-                        <TH as="div" styles={{ textAlign: 'right', borderBottom: true }}>
+                        <TH as="div" styles={{ textAlign: 'right', borderBottom: false }}>
                             Trade size
                         </TH>
-                        <TH as="div" styles={{ textAlign: 'right', borderBottom: true }}>
-                            Price ({quoteToken.symbol})
+                        <TH as="div" styles={{ textAlign: 'right', borderBottom: false }}>
+                            Price ({tokenSymbolToDisplayString(quoteToken.symbol)})
                         </TH>
                         {mySizeHeader}
                     </GridRowTop>
