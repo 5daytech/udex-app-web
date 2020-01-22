@@ -17,12 +17,29 @@ import {
 } from '../../../store/selectors';
 import { errorsWallet } from '../../../util/error_messages';
 import { isWeth } from '../../../util/known_tokens';
-import { tokenAmountInUnits, tokenSymbolToDisplayString } from '../../../util/tokens';
+import { tokenAmountInUnits, tokenSymbolToDisplayString, tokenAmountInUSD } from '../../../util/tokens';
 import { ButtonVariant, CurrencyPair, StoreState, Token, TokenBalance, Web3State } from '../../../util/types';
 import { Button } from '../../common/button';
 import { Card } from '../../common/card';
 import { ErrorCard, ErrorIcons, FontSize } from '../../common/error_card';
 import { IconType, Tooltip } from '../../common/tooltip';
+import { Column } from '../../common/column';
+import { Row } from '../../common/row';
+import { TokenIcon } from '../../common/icons/token_icon';
+
+const ColumnWrapper = styled(Column)`
+    justify-content: space-around;
+    height: 100%;
+`;
+
+const WalletBalanceCard = styled(Card)`
+    height: 35%;
+`;
+
+const StyledColumn = styled(Column)`
+    align-items: right;
+    justify-content: center;
+`;
 
 const LabelWrapper = styled.div`
     align-items: center;
@@ -41,6 +58,11 @@ const Label = styled.span`
     line-height: 1.2;
 `;
 
+const LabelStyled = styled(Label)`
+    padding-left: 10px;
+    font-size: 14px;
+`;
+
 const Value = styled.span`
     color: ${props => props.theme.componentsTheme.textColorCommon};
     font-feature-settings: 'tnum' 1;
@@ -50,6 +72,11 @@ const Value = styled.span`
     line-height: 1.2;
     text-align: right;
     white-space: nowrap;
+`;
+const USDValue = styled.div`
+    color: ${props => props.theme.componentsTheme.textColorCommon};
+    font-size: 12px;
+    text-align: right;
 `;
 
 const WalletStatusBadge = styled.div<{ web3State?: Web3State }>`
@@ -203,9 +230,9 @@ class WalletBalance extends React.Component<Props, State> {
         const { web3State } = this.props;
         const walletContent = this._getWalletContent();
         return (
-            <Card title={getWalletTitle(web3State)} action={getWallet(web3State)} minHeightBody={'0px'}>
-                {walletContent}
-            </Card>
+            <WalletBalanceCard title={getWalletTitle(web3State)} action={getWallet(web3State)} minHeightBody={'150px'}>
+                <ColumnWrapper>{walletContent}</ColumnWrapper>
+            </WalletBalanceCard>
         );
     };
 
@@ -215,13 +242,13 @@ class WalletBalance extends React.Component<Props, State> {
             web3State,
             currencyPair,
             onConnectWallet,
+            baseToken,
             quoteToken,
             quoteTokenBalance,
             baseTokenBalance,
             totalEthBalance,
         } = this.props;
-
-        if (quoteToken && baseTokenBalance && quoteTokenBalance) {
+        if (quoteToken && baseToken && baseTokenBalance && quoteTokenBalance) {
             const quoteTokenBalanceAmount = isWeth(quoteToken.symbol) ? totalEthBalance : quoteTokenBalance.balance;
             const quoteBalanceString = tokenAmountInUnits(
                 quoteTokenBalanceAmount,
@@ -233,22 +260,58 @@ class WalletBalance extends React.Component<Props, State> {
                 baseTokenBalance.token.decimals,
                 baseTokenBalance.token.displayDecimals,
             );
+            const quoteBalanceInUDS = tokenAmountInUSD(
+                quoteTokenBalance.balance,
+                quoteTokenBalance.token.decimals,
+                quoteTokenBalance.priceInUSD,
+                quoteToken.displayDecimals,
+            );
+            const baseBalanceInUDS = tokenAmountInUSD(
+                baseTokenBalance.balance,
+                baseTokenBalance.token.decimals,
+                baseTokenBalance.priceInUSD,
+                baseToken.displayDecimals,
+            );
             const toolTip = isWeth(quoteToken.symbol) ? (
                 <TooltipStyled description="Showing ETH + wETH balance" iconType={IconType.Fill} />
             ) : null;
             const quoteTokenLabel = isWeth(quoteToken.symbol) ? 'ETH' : tokenSymbolToDisplayString(currencyPair.quote);
+
             content = (
                 <>
                     <LabelWrapper>
-                        <Label>{tokenSymbolToDisplayString(currencyPair.base)}</Label>
-                        <Value>{baseBalanceString}</Value>
+                        <Row>
+                            <TokenIcon
+                                symbol={baseToken.symbol}
+                                primaryColor={baseToken.primaryColor}
+                                isInline={true}
+                                icon={baseToken.icon}
+                            />
+                            <LabelStyled>
+                                {baseToken.name} ({tokenSymbolToDisplayString(currencyPair.base)})
+                            </LabelStyled>
+                        </Row>
+                        <StyledColumn>
+                            <Value>{baseBalanceString}</Value>
+                            <USDValue>{baseBalanceInUDS}$</USDValue>
+                        </StyledColumn>
                     </LabelWrapper>
                     <LabelWrapper>
-                        <Label>
-                            {quoteTokenLabel}
-                            {toolTip}
-                        </Label>
-                        <Value>{quoteBalanceString}</Value>
+                        <Row>
+                            <TokenIcon
+                                symbol={quoteToken.symbol}
+                                primaryColor={quoteToken.primaryColor}
+                                isInline={true}
+                                icon={quoteToken.icon}
+                            />
+                            <LabelStyled>
+                                {quoteToken.name} ({quoteTokenLabel}) {toolTip}
+                            </LabelStyled>
+                        </Row>
+                        <StyledColumn>
+                            <Value>{quoteBalanceString}</Value>
+                            <USDValue>{quoteBalanceInUDS}$</USDValue>
+                        </StyledColumn>
                     </LabelWrapper>
                 </>
             );
