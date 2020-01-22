@@ -1,5 +1,6 @@
 import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
+import { DefaultText } from './text';
 
 import { themeDimensions } from '../../themes/commons';
 
@@ -41,7 +42,7 @@ export const DropdownTextItem: React.FC<Props> = props => {
 
     return (
         <DropdownTextItemWrapper onClick={onClick} {...restProps}>
-            {text}
+            <DefaultText>{text}</DefaultText>
         </DropdownTextItemWrapper>
     );
 };

@@ -99,17 +99,16 @@ export const Footer: React.FC<Props> = props => {
             <Row>
                 <AppStoreWrapper>
                     <a href="https://udex.app/share/ios" target="_blank" rel="noopener noreferrer">
-                        <img src={AppStoreURL} alt="AppStore"/>
+                        <img src={AppStoreURL} alt="AppStore" />
                     </a>
                 </AppStoreWrapper>
                 <PlayMarketWrapper>
                     <a href="https://udex.app/share/android" target="_blank" rel="noopener noreferrer">
-                        <img src={PlayMarketURL} alt="PlayMarket"/>
+                        <img src={PlayMarketURL} alt="PlayMarket" />
                     </a>
                 </PlayMarketWrapper>
-                
             </Row>
-            
+
             {/* <a href="https://udex.app/" target="_blank">
                 {playMarketSVG()}
             </a> */}

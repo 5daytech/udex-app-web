@@ -2,7 +2,7 @@ import React, { HTMLAttributes } from 'react';
 import styled from 'styled-components';
 import { Column } from './column';
 import { EmptyOrdersIcon } from './icons/empty_orders_icon';
-import { DefaultText} from './text';
+import { ThinText } from './text';
 
 interface EmptyWrapperProps {
     alignAbsoluteCenter?: boolean;
@@ -35,18 +35,29 @@ const EmptyContentWrapper = styled.div<EmptyWrapperProps>`
 `;
 
 const EmptyOrdersIconWrapper = styled.span`
-        margin-bottom: 2em;
+    margin-bottom: 2em;
 `;
 
+const ColumnWrapper = styled(Column)`
+    justify-content: center;
+    align-items: center;
+`;
+
+const TextWrapper = styled(ThinText)`
+    font-size: 18px;
+    line-height: 16px;
+`;
 
 export const EmptyContent: React.FC<Props> = props => {
     const { text, ...restProps } = props;
-    return <EmptyContentWrapper {...restProps}>
-            <Column>
+    return (
+        <EmptyContentWrapper {...restProps}>
+            <ColumnWrapper>
                 <EmptyOrdersIconWrapper>
-                    <EmptyOrdersIcon/>
+                    <EmptyOrdersIcon />
                 </EmptyOrdersIconWrapper>
-                <DefaultText>{text}</DefaultText>
-            </Column>
+                <TextWrapper>{text}</TextWrapper>
+            </ColumnWrapper>
         </EmptyContentWrapper>
+    );
 };
